@@ -4,7 +4,9 @@ NVIDIA **Omniverse Kit SDK 本體**的實戰教學——框架層,不是應用�
 
 姊妹 repo [isaac-sim-study](https://github.com/wicanr2/isaac-sim-study) · [線上版](https://wicanr2.github.io/isaac-sim-study/)
 
-> **狀態:骨架階段。** 目前 1 篇,工具鏈與分區已就緒。GitHub Pages 尚未開通,`docs/` 底下的 HTML 已建好,開通後即可直接用。
+> **狀態:骨架階段。** 目前 2 篇,工具鏈與分區已就緒。GitHub Pages 尚未開通,`docs/` 底下的 HTML 已建好,開通後即可直接用。
+>
+> **本 repo 目前沒有自有的 Kit 環境。** 已寫的兩篇是官方機制整理,篇首標明未實機驗證,並附待驗清單與各自的驗法。
 
 ## Kit 是框架,Isaac Sim 是搭在上面的應用
 
@@ -27,12 +29,12 @@ Isaac Sim       =  搭在 Kit 上的「一個應用」
 
 | 分區 | 篇數 | 收什麼 |
 |---|---|---|
-| [`docs/common/`](docs/common/) | 1 | 不綁 Kit 版本的機制與方法論 |
+| [`docs/common/`](docs/common/) | 2 | 不綁 Kit 版本的機制與方法論 |
 | [`docs/107/`](docs/107/) | 0 | 只在 Kit 107 成立的(Isaac Sim 5.0 / 5.1) |
 | [`docs/110/`](docs/110/) | 0 | 只在 Kit 110 成立的(Isaac Sim 6.0 / 6.0.1) |
 
 分區判準是「結論依不依賴 Kit 版本」,不是標題帶哪個版號。目前
-1 篇裡真正綁死 Kit 版本的有 0 篇,所以兩個版本區都還是空的。
+2 篇裡真正綁死 Kit 版本的有 0 篇,所以兩個版本區都還是空的。
 
 [版本差異速查](docs/version-matrix.md) 收 Kit ↔ Isaac Sim 的版本對應與已知跨版本變動,每列標證據等級。
 
@@ -41,6 +43,7 @@ Isaac Sim       =  搭在 Kit 上的「一個應用」
 | # | 篇名 |
 |---|---|
 | 01 | [Kit 是框架,Isaac Sim 是搭在上面的應用](docs/common/01-kit-is-the-framework/README.md) |
+| 02 | [extension 系統:相依解析、來源優先序、生命週期](docs/common/02-extension-system/README.md) |
 
 ## 這個 repo 收什麼
 
@@ -65,7 +68,7 @@ Isaac Sim       =  搭在 Kit 上的「一個應用」
 | 群 | 候選主題 |
 |---|---|
 | **Kit 是什麼** | ✅ 01 框架與應用的關係;`.kit` app 檔的結構與繼承;啟動流程與各層職責邊界 |
-| **extension** | `extension.toml`;相依解析與 registry;enable/disable 生命週期;「啟用成功」不是它活著;離線 registry |
+| **extension** | ✅ 02 `extension.toml`、相依解析、registry、生命週期、「啟用成功」不是它活著;尚缺:離線 / air-gapped registry |
 | **carb settings** | 設定樹;`--/path=value` 的形狀;persistent vs transient;優先序與誰蓋過誰 |
 | **USD 與 Fabric** | stage 與 Fabric 是兩份真值;什麼時候讀哪一份 |
 | **OmniGraph** | 節點型別是真的 USD 屬性;連線就是 attribute connection;圖跟著主迴圈走,不跟著物理走 |

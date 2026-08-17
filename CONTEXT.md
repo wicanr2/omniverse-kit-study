@@ -12,6 +12,11 @@
 | experience 檔 | `.kit` 檔的另一個稱呼,強調它決定了「這次啟動是哪一套體驗」。可用絕對路徑或相對路徑指定。 |
 | 相依樹 | `.kit` 檔的 `[dependencies]` 展開後的結果:extension 相依 extension,一路展開;Kit 啟動時解析它並決定載入順序。 |
 | registry | extension 的遠端來源。第一次用某個 experience 檔啟動時會從這裡拉,官方稱可能超過十分鐘;拉完才有快取。 |
+| registryCache | 從 registry 下載的 extension 解壓後存放的本地快取目錄,由 `app/extensions/registryCache` 設定。「安裝」就是解壓進這裡。 |
+| devPaths / devFolders | 開發用的 extension 搜尋路徑。**會忽略所有版本檢查,而且優先於其他路徑**——所以開發機上的「跑得起來」不能當成正式環境的證明。 |
+| 相容(版本) | Kit 的判準:兩個版本的**最左邊那個非零**的 major/minor/patch 相同才算相容。因此 `0.5.x` 與 `0.6.x` 不相容。 |
+| IExt | extension 的進入點介面。Python 是 `omni.ext.IExt` 的子類別,啟用時實例化並呼叫 `on_startup`,停用時 `on_shutdown`;C++ 對應 `onStartup` / `onShutdown`。 |
+| 熱重載(hot reload) | extension 系統偵測到已啟用 extension 的檔案變動時,把它停用再啟用;可能連帶重載相依樹的一大片。以 `reloadable` 設定關閉。 |
 | carb settings | Kit 的全域設定樹。啟動參數 `--/path/to/key=value`、`.kit` 檔的 `[settings]` 段、環境變數都是在改這棵樹。 |
 | carb | Carbonite,Kit 底層的 C++ 框架層,提供設定、外掛載入等基礎服務。`carb settings` 的名字由此而來。 |
 | USD | Universal Scene Description,Pixar 開源的 3D 場景描述格式,Kit 的原生場景格式。 |

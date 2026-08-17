@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="560" fill="#faf8f4"/>
+
+  <!-- 流程主幹 -->
+  <rect x="45" y="34" width="330" height="46" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.5"/>
+  <text x="62" y="55" font-size="14" fill="#1f6f63" font-family="ui-monospace,'DejaVu Sans Mono',monospace">[dependencies]</text>
+  <text x="62" y="73" font-size="12.5" fill="#8a827a">.kit 檔或 extension.toml 列出的相依</text>
+
+  <path d="M210 80 L210 108" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M210 112 l-5 -9 h10 z" fill="#8a827a"/>
+
+  <rect x="45" y="112" width="330" height="42" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="62" y="139" font-size="14" fill="#3d3833">遞迴解出整張相依圖</text>
+
+  <path d="M210 154 L210 182" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M210 186 l-5 -9 h10 z" fill="#8a827a"/>
+
+  <rect x="45" y="186" width="330" height="42" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="62" y="213" font-size="14" fill="#3d3833">每個相依挑一個版本</text>
+
+  <!-- semver 註記 -->
+  <line x1="375" y1="207" x2="415" y2="207" stroke="#cfc8bd" stroke-width="1.2"/>
+  <rect x="415" y="172" width="440" height="70" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="432" y="194" font-size="13" fill="#1f6f63" font-weight="600">相容的定義</text>
+  <text x="432" y="215" font-size="12.5" fill="#57514b">最左邊那個非零的 major/minor/patch 相同,才算相容</text>
+  <text x="432" y="233" font-size="12.5" fill="#8a4a12">所以 0.5.3 與 0.5.4 相容,0.5.x 與 0.6.x 不相容</text>
+
+  <path d="M210 228 L210 258" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M210 262 l-5 -9 h10 z" fill="#8a827a"/>
+
+  <!-- 來源優先序 -->
+  <text x="45" y="284" font-size="13" fill="#8a827a">這個版本從哪裡拿,依序試:</text>
+
+  <rect x="45" y="294" width="810" height="44" rx="6" fill="#fdf3e9" stroke="#b5651d" stroke-width="1.5"/>
+  <text x="62" y="312" font-size="13.5" fill="#8a4a12" font-weight="600">1 · devFolders / devPaths</text>
+  <text x="62" y="330" font-size="12.5" fill="#8a4a12">開發用路徑。<tspan font-weight="600">會忽略所有版本檢查</tspan>,而且優先於其他路徑</text>
+
+  <rect x="45" y="346" width="810" height="44" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="62" y="364" font-size="13.5" fill="#3d3833" font-weight="600">2 · folders / paths 與本地快取</text>
+  <text x="62" y="382" font-size="12.5" fill="#57514b">解析器偏好已經下載過的本地版本,勝過新的遠端版本</text>
+
+  <rect x="45" y="398" width="810" height="44" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="62" y="416" font-size="13.5" fill="#3d3833" font-weight="600">3 · registry</text>
+  <text x="62" y="434" font-size="12.5" fill="#57514b">本地快取沒有才去問。安裝就是把 zip 解壓進 registryCache</text>
+
+  <path d="M450 442 L450 470" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M450 474 l-5 -9 h10 z" fill="#8a827a"/>
+  <text x="464" y="462" font-size="12" fill="#8a827a">整張圖都解出來之後</text>
+
+  <rect x="45" y="474" width="810" height="42" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.5"/>
+  <text x="62" y="501" font-size="14" fill="#1f6f63">整棵樹依序啟用,每個 extension 各自跑自己的 on_startup</text>
+
+  <text x="45" y="540" font-size="12.5" fill="#8a4a12">第 1 層忽略版本檢查,所以「開發機上跑得起來」證明不了正式環境跑得起來。</text>
+</svg>

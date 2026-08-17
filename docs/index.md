@@ -6,7 +6,7 @@
 
 ## 三個入口
 
-**[共通:機制與方法論](common/)** · 1 篇
+**[共通:機制與方法論](common/)** · 2 篇
 不綁 Kit 版本的機制與方法。Kit 的多數概念——extension 相依樹、設定樹的優先序、stage 與 Fabric 的分工——跨版本是同一套,所以不按版本分。
 
 **[Kit 107](107/)** · 0 篇
@@ -25,9 +25,14 @@
 | 想搞清楚 Kit 與 Isaac Sim 到底誰包含誰 | [01 Kit 是框架,Isaac Sim 是搭在上面的應用](common/01-kit-is-the-framework/README.md) |
 | 在 Isaac Sim 裡遇到問題,不確定該查誰的文件 | [01 §5 症狀該往哪一層找](common/01-kit-is-the-framework/README.md) |
 | 手上有一套 Isaac Sim,想知道底下是哪一版 Kit | [01 §4 版本對應](common/01-kit-is-the-framework/README.md) |
+| 同一份程式碼在開發機能跑、換一台就說找不到 extension | [02 §4 版本從哪裡拿](common/02-extension-system/README.md) |
+| 啟用了 extension,該有的東西卻不存在 | [02 §7 「啟用回傳成功」不是「它活著」](common/02-extension-system/README.md) |
+| 改一個檔案就整個應用停頓一下 | [02 §6 熱重載](common/02-extension-system/README.md) |
 
 ## 這個 repo 的狀態
 
-骨架階段。目前 1 篇,主題骨架列在[根 README](https://github.com/wicanr2/omniverse-kit-study#主題骨架) 裡。
+骨架階段。目前 2 篇,主題骨架列在[根 README](https://github.com/wicanr2/omniverse-kit-study#主題骨架) 裡。
+
+**本 repo 目前沒有自有的 Kit 環境**,已寫的兩篇都是官方機制整理,篇首標明未實機驗證,並各自附了待驗清單([02 §8](common/02-extension-system/README.md))。拿到環境之後逐條升級。
 
 機器人領域的內容在姊妹 repo [isaac-sim-study](https://github.com/wicanr2/isaac-sim-study)([線上版](https://wicanr2.github.io/isaac-sim-study/))。兩邊的分工判準寫在 [01 §6](common/01-kit-is-the-framework/README.md)。

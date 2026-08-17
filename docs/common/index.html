@@ -13,12 +13,12 @@
   <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
 </header>
 <div class="shell">
-  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li></ul></aside>
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li></ul></aside>
   <main class="doc">
 <h1 id="共通機制與方法論">共通:機制與方法論</h1>
 <p>不綁 Kit 版本的內容。Kit 的多數核心概念跨版本是同一套——extension 相依樹怎麼解析、設定樹誰蓋過誰、stage 與 Fabric 為什麼是兩份真值——結論不隨版本改變的就收在這裡,不複製成兩份。</p>
 <p>版本一改就不成立的,收到 <a href="../107">Kit 107</a> 或 <a href="../110">Kit 110</a>。</p>
-<p>這一區的 1 篇:</p>
+<p>這一區的 2 篇:</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -32,6 +32,11 @@
 <td>01</td>
 <td><a href="../common/01-kit-is-the-framework/">Kit 是框架,Isaac Sim 是搭在上面的應用</a></td>
 <td>應用就是一棵 extension 相依樹的根,而 <code>.kit</code> 檔就是那個根;Kit 與 Isaac Sim 的版本對應;症狀該往哪一層找</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="../common/02-extension-system/">extension 系統:相依解析、來源優先序、生命週期</a></td>
+<td>相容的判準是最左邊那個非零位;開發路徑會忽略版本檢查;啟用回傳成功不是它活著</td>
 </tr>
 </tbody>
 </table></div>
