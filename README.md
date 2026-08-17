@@ -4,9 +4,9 @@ NVIDIA **Omniverse Kit SDK 本體**的實戰教學——框架層,不是應用�
 
 [線上版](https://wicanr2.github.io/omniverse-kit-study/) · 姊妹 repo [isaac-sim-study](https://github.com/wicanr2/isaac-sim-study)([線上版](https://wicanr2.github.io/isaac-sim-study/))
 
-> **狀態:主題骨架已補滿,共 10 篇。**
+> **狀態:主題骨架已補滿,共 11 篇。**
 >
-> **本 repo 目前沒有自有的 Kit 環境。** 十篇都是官方機制整理,篇首標明未實機驗證,並附待驗清單與各自的驗法——共 48 條,每條寫明怎麼驗、什麼算通過。拿到環境後逐條升級成實測結論。
+> **本 repo 目前沒有自有的 Kit 環境。** 十一篇都是官方機制整理,篇首標明未實機驗證,並附待驗清單與各自的驗法——共 53 條,每條寫明怎麼驗、什麼算通過。拿到環境後逐條升級成實測結論。
 
 ## Kit 是框架,Isaac Sim 是搭在上面的應用
 
@@ -31,10 +31,10 @@ Isaac Sim       =  搭在 Kit 上的「一個應用」
 |---|---|---|
 | [`docs/common/`](docs/common/) | 10 | 不綁 Kit 版本的機制與方法論 |
 | [`docs/107/`](docs/107/) | 0 | 只在 Kit 107 成立的(Isaac Sim 5.0 / 5.1) |
-| [`docs/110/`](docs/110/) | 0 | 只在 Kit 110 成立的(Isaac Sim 6.0 / 6.0.1) |
+| [`docs/110/`](docs/110/) | 1 | 只在 Kit 110 成立的(Isaac Sim 6.0 / 6.0.1) |
 
 分區判準是「結論依不依賴 Kit 版本」,不是標題帶哪個版號。目前
-10 篇裡真正綁死 Kit 版本的有 0 篇,所以兩個版本區都還是空的。
+11 篇裡真正綁死 Kit 版本的有 1 篇(升級指南),所以 110 區有 1 篇、107 區仍是空的。
 
 [版本差異速查](docs/version-matrix.md) 收 Kit ↔ Isaac Sim 的版本對應與已知跨版本變動,每列標證據等級。
 
@@ -52,6 +52,7 @@ Isaac Sim       =  搭在 Kit 上的「一個應用」
 | 08 | [除錯:這一層的東西壞掉時不會拋例外](docs/common/08-debugging/README.md) |
 | 09 | [omni.ui:UI 是 extension 提供的,所以它的有無是相依問題](docs/common/09-omni-ui/README.md) |
 | 10 | [打包與發佈:同一份 `.kit` 檔,兩次 build 不保證一樣](docs/common/10-packaging-and-release/README.md) |
+| 11 | [從 Kit 107 升到 110:官方列出的移除與棄用](docs/110/11-migrating-107-to-110/README.md) |
 
 ## 這個 repo 收什麼
 
@@ -85,6 +86,14 @@ Isaac Sim       =  搭在 Kit 上的「一個應用」
 | **執行模式** | ✅ 06 視窗與算圖是兩個獨立開關、`--exec`、串流的三個 extension 與兩個限制;尚缺:非同步算圖 |
 | **打包發佈** | ✅ 10 `kit-app-template`、`.kit` 是 manifest、版本範圍造成的不可重現、三道防線;尚缺:容器化與發佈通路 |
 | **除錯** | ✅ 08 假訊號/真訊號對照、log 路徑與 channel 分級、正對照、排查順序;尚缺:profiler 與效能剖析 |
+
+## examples
+
+[`examples/`](examples/) 把待驗清單變成可以直接跑的東西:最小的 `.kit` 應用檔、驗證腳本骨架、以及**48 條待驗條目按環境需求的分級**(L0 只要上網 / L1 要 SDK 但不必啟動 / L2 要能啟動 Kit / L3 要能算圖)。
+
+腳本盡量走命令列而非 Python API——`--enable`、`--/path=value`、`--exec`、`--no-window`、`--/app/quitAfter` 都有官方出處,Python 那一側查證得少,所以縮到最小並標記 `TODO(未查證)`。每個腳本都內建正對照:試紙失敗就中止,不拿壞掉的查法去產生結論。
+
+⚠ **這些腳本沒有在本 repo 執行過**,本機不符合 Kit 的官方硬體需求(需要 NVIDIA RTX GPU)。
 
 ## 寫作紀律
 

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 452" width="900" height="452"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="452" fill="#faf8f4"/>
+
+  <text x="45" y="30" font-size="15" fill="#3d3833" font-weight="600">三類變更,三個浮現的時機</text>
+  <text x="45" y="52" font-size="12.5" fill="#8a827a">越往下,越晚才會被發現</text>
+
+  <line x1="45" y1="70" x2="855" y2="70" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="68" y="90" font-size="12" fill="#8a827a">變更的種類</text>
+  <text x="400" y="90" font-size="12" fill="#8a827a">什麼時候浮現</text>
+  <text x="640" y="90" font-size="12" fill="#8a827a">升級測試要涵蓋</text>
+  <line x1="45" y1="100" x2="855" y2="100" stroke="#cfc8bd" stroke-width="1"/>
+
+  <!-- 1 -->
+  <rect x="45" y="112" width="5" height="64" fill="#1f6f63"/>
+  <text x="68" y="134" font-size="13.5" fill="#1f6f63" font-weight="600">extension 或節點型別被移除</text>
+  <text x="68" y="156" font-size="12" fill="#8a827a">相依解不到,或圖建不起來</text>
+  <text x="400" y="134" font-size="13" fill="#3d3833">啟動時</text>
+  <text x="400" y="156" font-size="12" fill="#8a827a">log 通常有訊息</text>
+  <text x="640" y="145" font-size="12.5" fill="#57514b">啟動一次,讀 log</text>
+
+  <line x1="45" y1="188" x2="855" y2="188" stroke="#e8e3da" stroke-width="1"/>
+
+  <!-- 2 -->
+  <rect x="45" y="200" width="5" height="64" fill="#8a827a"/>
+  <text x="68" y="222" font-size="13.5" fill="#3d3833" font-weight="600">API 或參數被移除</text>
+  <text x="68" y="244" font-size="12" fill="#8a827a">呼叫那一行才炸</text>
+  <text x="400" y="222" font-size="13" fill="#3d3833">執行到那一行時</text>
+  <text x="400" y="244" font-size="12" fill="#8a4a12">沒走到的路徑不會發現</text>
+  <text x="640" y="233" font-size="12.5" fill="#57514b">跑過每一條分支,不只主流程</text>
+
+  <line x1="45" y1="276" x2="855" y2="276" stroke="#e8e3da" stroke-width="1"/>
+
+  <!-- 3 -->
+  <rect x="45" y="288" width="5" height="64" fill="#b5651d"/>
+  <text x="68" y="310" font-size="13.5" fill="#8a4a12" font-weight="600">預設值或後端被改掉</text>
+  <text x="68" y="332" font-size="12" fill="#8a827a">程式碼一個字都沒錯</text>
+  <text x="400" y="310" font-size="13" fill="#8a4a12">不會浮現</text>
+  <text x="400" y="332" font-size="12" fill="#8a4a12">沒有訊息,只是結果不同</text>
+  <text x="640" y="321" font-size="12.5" fill="#8a4a12">比對升級前後的實際輸出</text>
+
+  <line x1="45" y1="364" x2="855" y2="364" stroke="#cfc8bd" stroke-width="1"/>
+
+  <text x="45" y="392" font-size="14" fill="#3d3833">「升上去之後啟動成功了」只驗到第一列。</text>
+  <text x="45" y="420" font-size="13.5" fill="#8a4a12">第三列不會出現在任何 log 裡——只有拿升級前的輸出來比,才看得見。</text>
+</svg>

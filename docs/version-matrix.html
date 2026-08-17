@@ -13,7 +13,7 @@
   <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
 </header>
 <div class="shell">
-  <aside class="side"><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#kit-版本與-isaac-sim-的對應">Kit 版本與 Isaac Sim 的對應</a></li><li class="l2"><a href="#已知的跨版本變動">已知的跨版本變動</a></li><li class="l2"><a href="#這張表現在還很短">這張表現在還很短</a></li></ul></aside>
+  <aside class="side"><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#kit-版本與-isaac-sim-的對應">Kit 版本與 Isaac Sim 的對應</a></li><li class="l2"><a href="#已知的跨版本變動">已知的跨版本變動</a></li><li class="l2"><a href="#表上沒有的不等於兩版相同">表上沒有的,不等於兩版相同</a></li></ul></aside>
   <main class="doc">
 <h1 id="kit-版本差異速查">Kit 版本差異速查</h1>
 <p>跨版本排查最花時間的不是「哪裡不一樣」,是「這個症狀該不該歸給版本」。這張表把本 repo 查證過的差異集中在一處,每一列標出處與證據等級。<strong>沒列進來的,就是本 repo 沒有證據,不要當成「兩版相同」。</strong></p>
@@ -84,18 +84,74 @@
 <td><code>omni.kit.window.viewport</code></td>
 <td>106 標為 deprecated,107 從 SDK 移除</td>
 <td>官方 release notes,本 repo 未實機驗證</td>
-<td><a href="107">Kit 107 區</a></td>
+<td><a href="110/11-migrating-107-to-110/">11 §2</a></td>
 </tr>
 <tr>
 <td>版本號連續性</td>
 <td>107 之後是 109(僅早期開發版)、110,沒有 108</td>
 <td>由 release notes 推得</td>
-<td><a href="110">Kit 110 區</a></td>
+<td><a href="110/11-migrating-107-to-110/">11 §1</a></td>
+</tr>
+<tr>
+<td><code>ITokens</code> 的 unsafe string 方法</td>
+<td>110.0 移除</td>
+<td>官方逐字(OMPE-56022)</td>
+<td><a href="110/11-migrating-107-to-110/">11 §2</a></td>
+</tr>
+<tr>
+<td><code>ui.Menu</code> / <code>ui.Separator</code> 的 <code>menu_compatibility</code></td>
+<td>110.0 移除</td>
+<td>官方逐字(OMPE-69110)</td>
+<td><a href="110/11-migrating-107-to-110/">11 §2</a></td>
+</tr>
+<tr>
+<td><code>omni.kit.widget.settings.deprecated</code></td>
+<td>110.0 移除,須遷移</td>
+<td>官方逐字(OMPE-59133)</td>
+<td><a href="110/11-migrating-107-to-110/">11 §2</a></td>
+</tr>
+<tr>
+<td>OmniGraph <code>DeformedPointsToHydra</code> 節點</td>
+<td>110.0 移除</td>
+<td>官方逐字(OMPE-69458)</td>
+<td><a href="110/11-migrating-107-to-110/">11 §2</a></td>
+</tr>
+<tr>
+<td>RTX multi-node rendering</td>
+<td>110.0 移除</td>
+<td>官方逐字(OMPE-67531)</td>
+<td><a href="110/11-migrating-107-to-110/">11 §2</a></td>
+</tr>
+<tr>
+<td>Hydra 2 rendering backend</td>
+<td>110.0 停用</td>
+<td>官方逐字(OMPE-68552)</td>
+<td><a href="110/11-migrating-107-to-110/">11 §2</a></td>
+</tr>
+<tr>
+<td><code>omni.renderer_capture</code></td>
+<td>110.0 棄用</td>
+<td>官方逐字(OMPE-71542)</td>
+<td><a href="110/11-migrating-107-to-110/">11 §3</a></td>
+</tr>
+<tr>
+<td><code>IFileSystem</code> 的 raw <code>char*</code> 方法</td>
+<td>110.0 棄用</td>
+<td>官方逐字(OMPE-57069)</td>
+<td><a href="110/11-migrating-107-to-110/">11 §3</a></td>
+</tr>
+<tr>
+<td><code>OnCustomEvent</code> 的 bundle 屬性</td>
+<td>110.0 棄用</td>
+<td>官方逐字(OMPE-72264)</td>
+<td><a href="110/11-migrating-107-to-110/">11 §3</a></td>
 </tr>
 </tbody>
 </table></div>
-<h2 id="這張表現在還很短">這張表現在還很短</h2>
-<p>骨架階段,共通區只有 1 篇,兩個版本區都還是空的。<strong>表短不代表兩版差異少</strong>,只代表本 repo 還沒有證據。分區判準是「結論依不依賴版本」:一條結論兩版都成立就留在共通區,只有出現「只有這一版這樣」的證據時才會落進版本區,同時在這裡補一列。</p>
+<p>升級時比清單本身更要緊的一件事:<strong>這些變更浮現的時機不同</strong>,而只有第一類會在啟動時被抓到。分類與對應的測試涵蓋見 <a href="110/11-migrating-107-to-110/">11 §4</a>。</p>
+<h2 id="表上沒有的不等於兩版相同">表上沒有的,不等於兩版相同</h2>
+<p>上面那幾列全部來自官方 release notes,<strong>本 repo 一條都沒有實機驗證</strong>,驗法列在 <a href="110/11-migrating-107-to-110/">11 §6</a>。</p>
+<p>分區判準是「結論依不依賴版本」:一條結論兩版都成立就留在共通區,只有出現「只有這一版這樣」的證據時才會落進版本區,同時在這裡補一列。目前共通區 10 篇的機制在兩版都成立,所以 107 區還是空的。</p>
   </main>
 </div>
 <footer class="foot">

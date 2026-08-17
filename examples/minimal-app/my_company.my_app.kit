@@ -1,0 +1,35 @@
+# 最小的 Kit 應用檔,當作實驗的載體。
+#
+# ⚠ 未在本 repo 啟動過(本機不符合 Kit 的硬體需求,見 ../README.md)。
+#
+# 這個檔案本身就是一個 extension,同時扮演相依樹的根——官方說法是
+# 「a single-file extension and acts as a manifest」。見 docs/common/01 §2、10 §2。
+
+[package]
+version = "0.1.0"
+title = "Minimal Kit App"
+description = "驗證用的最小應用"
+
+[dependencies]
+# ⚠ 這一段決定這個應用「是什麼」。拿掉一行,對應的能力就整個不存在。
+#
+# UI:註解掉下面這行,就是 docs/common/09 §5 第 4 條要驗的組態
+# (不含 UI 的 .kit 能不能正常啟動、UI 相關 API 是不是真的不見了)。
+# 注意這與 --no-window 不同:那個只切「顯示」,extension 照樣載入。
+"omni.kit.uiapp" = {}
+
+# 版本釘選:上面那樣寫是「最新的相容版」,而相容是一個範圍
+# (docs/common/02 §2)。要可重現的話改成帶 exact 的形式——
+# TODO(未查證):exact 的確切語法與語意,見 docs/common/10 §4。
+
+[settings]
+# 這一段寫進來的東西落在設定樹的根。
+# 合併規則是「先寫先贏」:所有 [settings] 在任何 extension 啟動前套用完,
+# 順序是啟動順序的反向,且不互相覆蓋(docs/common/03 §3)。
+# 所以這裡寫的值會勝過底下那些 extension 自己的預設。
+app.window.title = "Minimal Kit App"
+
+# 排查用:把日誌調大聲。等級可為 verbose / info / warn / error / fatal,
+# 預設是 info 寫入檔案(docs/common/08 §3)。
+# 只調某一組 channel 比全開 verbose 有用——全開會把要找的那行淹掉。
+# TODO(未查證):channel 設定在 .kit 檔裡的確切鍵名寫法。

@@ -12,7 +12,7 @@
 **[Kit 107](107/)** · 0 篇
 只在 107 系列成立的內容。Isaac Sim 5.0 / 5.1 底下就是這一版。
 
-**[Kit 110](110/)** · 0 篇
+**[Kit 110](110/)** · 1 篇
 只在 110 系列成立的內容。Isaac Sim 6.0 / 6.0.1 底下是這一版。
 
 **[版本差異速查](version-matrix.md)**
@@ -43,11 +43,12 @@
 | headless 想省記憶體,不確定該切哪一層 | [09 §3 UI 的存在是相依問題](common/09-omni-ui/README.md) |
 | 開發機測過,搬到別台就不一樣 | [10 §3 版本解析的不確定性](common/10-packaging-and-release/README.md) |
 | 要交付一個 Kit 應用,不知道該檢查什麼 | [10 §5 交付前的檢查](common/10-packaging-and-release/README.md) |
+| 要從 107 升到 110,不知道會撞到什麼 | [11 官方列出的移除與棄用](110/11-migrating-107-to-110/README.md) |
 
 ## 這個 repo 的狀態
 
-主題骨架已補滿,共 10 篇。剩下的候選主題列在[根 README](https://github.com/wicanr2/omniverse-kit-study#主題骨架) 裡,每一群都標了還缺什麼。
+主題骨架已補滿,共 11 篇(共通 10 + Kit 110 一篇)。剩下的候選主題列在[根 README](https://github.com/wicanr2/omniverse-kit-study#主題骨架) 裡,每一群都標了還缺什麼。
 
-**本 repo 目前沒有自有的 Kit 環境**,十篇都是官方機制整理,篇首標明未實機驗證,並各自附了待驗清單([02 §8](common/02-extension-system/README.md)、[03 §8](common/03-carb-settings/README.md)、[04 §6](common/04-usd-stage-and-fabric/README.md)、[05 §6](common/05-omnigraph/README.md)、[06 §7](common/06-run-modes/README.md)、[07 §7](common/07-rendering-and-materials/README.md)、[08 §6](common/08-debugging/README.md)、[09 §5](common/09-omni-ui/README.md)、[10 §6](common/10-packaging-and-release/README.md))。拿到環境之後逐條升級。
+**本 repo 目前沒有自有的 Kit 環境**,十一篇都是官方機制整理,篇首標明未實機驗證,並各自附了待驗清單([02 §8](common/02-extension-system/README.md)、[03 §8](common/03-carb-settings/README.md)、[04 §6](common/04-usd-stage-and-fabric/README.md)、[05 §6](common/05-omnigraph/README.md)、[06 §7](common/06-run-modes/README.md)、[07 §7](common/07-rendering-and-materials/README.md)、[08 §6](common/08-debugging/README.md)、[09 §5](common/09-omni-ui/README.md)、[10 §6](common/10-packaging-and-release/README.md)、[11 §6](110/11-migrating-107-to-110/README.md))。拿到環境之後逐條升級。
 
 機器人領域的內容在姊妹 repo [isaac-sim-study](https://github.com/wicanr2/isaac-sim-study)([線上版](https://wicanr2.github.io/isaac-sim-study/))。兩邊的分工判準寫在 [01 §6](common/01-kit-is-the-framework/README.md)。

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 · 從 Kit 107 升到 110:官方列出的移除與棄用 — Omniverse Kit 實戰筆記</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../../">Omniverse Kit 實戰筆記</a>
+  <nav class="tabs"><a href="../../">總覽</a><a href="../../common/">共通</a><a href="../../107/">Kit 107</a><a href="../../110/" class="on">Kit 110</a><a href="../../version-matrix.html">版本差異</a></nav>
+  <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
+</header>
+<div class="shell">
+  <aside class="side"><div class="side-h">Kit 110</div><ul class="side-l"><li><a href="../../110/11-migrating-107-to-110/" class="on"><span class="n">11</span>從 Kit 107 升到 110</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-中間沒有-108">1. 中間沒有 108</a></li><li class="l2"><a href="#2-官方列出的移除">2. 官方列出的移除</a></li><li class="l2"><a href="#3-官方列出的棄用">3. 官方列出的棄用</a></li><li class="l2"><a href="#4-三類變更三個浮現時機">4. 三類變更,三個浮現時機</a></li><li class="l2"><a href="#5-升級前後該做的">5. 升級前後該做的</a></li><li class="l2"><a href="#6-待驗清單">6. 待驗清單</a></li></ul></aside>
+  <main class="doc">
+<h1 id="11-從-kit-107-升到-110官方列出的移除與棄用">11 · 從 Kit 107 升到 110:官方列出的移除與棄用</h1>
+<p>升級最貴的部分不是改壞掉的那幾行,是<strong>不知道哪幾行會壞</strong>。</p>
+<p>這篇整理官方 release notes 明列的移除與棄用項,以及一件比清單本身更重要的事:這三類變更浮現的時機不同,而只有第一類會在啟動時被抓到。</p>
+<p align="center"><img src="../../img/upgrade-failure-timing.svg" width="850" alt="三類變更各自浮現的時機,以及升級測試要涵蓋什麼"></p>
+
+<blockquote>
+<p><strong>驗證狀態</strong>:§2、§3 逐字引自官方 release notes,每條帶官方的 issue 編號。<strong>本 repo 沒有 Kit 環境,未實機驗證任何一條</strong>。§4 是把這些變更接回失效形狀的分析,§6 是待驗清單。</p>
+</blockquote>
+<h2 id="1-中間沒有-108">1. 中間沒有 108</h2>
+<p>版本號從 107 直接跳到 110。109 只出現在 Isaac Sim 6.0 的早期開發版(Kit 109.0.2),沒有對應的正式產品線;108 不存在。</p>
+<p>看到不連續不用回頭找。對應關係見 <a href="../../version-matrix.html">version-matrix</a>。</p>
+<h2 id="2-官方列出的移除">2. 官方列出的移除</h2>
+<p>Kit 110.0 release notes 明列的移除項:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>子系統</th>
+<th>移除了什麼</th>
+<th>官方編號</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Foundation</td>
+<td>"Removed previously deprecated unsafe string methods from <code>ITokens</code>."</td>
+<td>OMPE-56022</td>
+</tr>
+<tr>
+<td>Kit SDK</td>
+<td>"The legacy <code>menu_compatibility</code> parameter is removed from <code>ui.Menu</code> and <code>ui.Separator</code>."</td>
+<td>OMPE-69110</td>
+</tr>
+<tr>
+<td>Kit SDK</td>
+<td>settings widget 的既有棄用程式碼「has been removed. Extensions using <code>omni.kit.widget.settings.deprecated</code> must migrate to the current API.」</td>
+<td>OMPE-59133</td>
+</tr>
+<tr>
+<td>OmniGraph</td>
+<td>"The <code>DeformedPointsToHydra</code> node is removed as part of OmniHydra deprecation."</td>
+<td>OMPE-69458</td>
+</tr>
+<tr>
+<td>RTX</td>
+<td>"Previously deprecated multi-node rendering support and related networking code are removed."</td>
+<td>OMPE-67531</td>
+</tr>
+<tr>
+<td>USD Core</td>
+<td>"Hydra 2 rendering backend is disabled."</td>
+<td>OMPE-68552</td>
+</tr>
+</tbody>
+</table></div>
+<p>另外一條屬於更早的變動,但升級時同樣會撞到:<code>omni.kit.window.viewport</code> 在 Kit 106 標為 deprecated,<strong>到 107 已從 SDK 移除</strong>。針對 106 寫的程式碼直接跳到 110,會先在這裡斷掉。</p>
+<h2 id="3-官方列出的棄用">3. 官方列出的棄用</h2>
+<p>棄用還能用,但下一版可能就不能:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>子系統</th>
+<th>棄用了什麼</th>
+<th>官方編號</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Foundation</td>
+<td>"<code>IFileSystem</code> raw <code>char*</code> methods are deprecated in favor of new safe string-based alternatives."</td>
+<td>OMPE-57069</td>
+</tr>
+<tr>
+<td>Kit SDK</td>
+<td>"<code>omni.renderer_capture</code> is deprecated. Use alternative capture APIs instead."</td>
+<td>OMPE-71542</td>
+</tr>
+<tr>
+<td>OmniGraph</td>
+<td>"The bundle attributes on <code>omni.graph.action.OnCustomEvent</code> are deprecated. Use the non-bundle equivalents instead."</td>
+<td>OMPE-72264</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>omni.renderer_capture</code> 這條對做離線算圖或自動截圖的流程影響最直接——那類腳本通常不在互動測試的路徑上,升級時容易漏掉。</p>
+<h2 id="4-三類變更三個浮現時機">4. 三類變更,三個浮現時機</h2>
+<p>清單本身只是原料。真正決定升級測試該怎麼做的,是這些變更<strong>什麼時候才會被發現</strong>。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>變更的種類</th>
+<th>什麼時候浮現</th>
+<th>升級測試要涵蓋</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>extension 或節點型別被移除</td>
+<td><strong>啟動時</strong>,log 通常有訊息</td>
+<td>啟動一次,讀 log</td>
+</tr>
+<tr>
+<td>API 或參數被移除</td>
+<td><strong>執行到那一行時</strong>;沒走到的路徑不會發現</td>
+<td>跑過每一條分支,不只主流程</td>
+</tr>
+<tr>
+<td>預設值或後端被改掉</td>
+<td><strong>不會浮現</strong>,沒有訊息,只是結果不同</td>
+<td>比對升級前後的實際輸出</td>
+</tr>
+</tbody>
+</table></div>
+<p>對照 §2 的清單:<code>DeformedPointsToHydra</code> 節點移除屬第一類——圖裡用到它就建不起來,而 <a href="../../common/05-omnigraph/">05 §5</a> 的節點型別查詢抓得到。<code>menu_compatibility</code> 與 <code>ITokens</code> 的字串方法屬第二類,要走到那行才炸。<strong>「Hydra 2 rendering backend is disabled」屬第三類</strong>——沒有人會報錯,只是算出來的東西可能不一樣。</p>
+<p>由此得到一條升級紀律:</p>
+<blockquote>
+<p><strong>「升上去之後啟動成功了」只驗到第一列。</strong></p>
+</blockquote>
+<p>第三類完全不會出現在任何 log 裡,只有拿升級前的輸出來比才看得見。這與 <a href="../../common/07-rendering-and-materials/">07 §6</a> 是同一件事——輸出的每一項參數都正常,錯的只有內容。</p>
+<h2 id="5-升級前後該做的">5. 升級前後該做的</h2>
+<p>把 §4 落成動作:</p>
+<ul>
+<li>[ ] <strong>升級前先留基準。</strong> 同一組輸入在 107 上跑一次,把輸出存起來(算圖結果、log、關鍵數值)。升完才想到要比就來不及了。</li>
+<li>[ ] 啟動一次讀 log,找相依解析與節點型別的錯誤(第一類)</li>
+<li>[ ] 跑過每一條分支,包含離線算圖、批次腳本這種不在互動路徑上的(第二類)</li>
+<li>[ ] 拿基準比對輸出(第三類)</li>
+<li>[ ] 順手處理 §3 的棄用項——它們現在還能動,但拖到下一版就變成第二類</li>
+<li>[ ] 版本釘選確認過(<a href="../../common/10-packaging-and-release/">10 §4</a>),避免升級與版本漂移兩件事混在一起查</li>
+</ul>
+<p>倒數第二項容易被跳過,理由通常是「還能跑」。代價是下一次升級時,要同時處理兩版累積的棄用。</p>
+<h2 id="6-待驗清單">6. 待驗清單</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>待驗的斷言</th>
+<th>怎麼驗</th>
+<th>什麼算通過</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>§2 各條在 110 上確實不存在</td>
+<td>逐條寫最小重現,在 110 上跑</td>
+<td>各自以官方描述的方式失敗</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DeformedPointsToHydra</code> 移除後圖建不起來(§4 第一類)</td>
+<td>在 110 上開一個用到該節點的圖</td>
+<td>建圖失敗且 log 有訊息</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Hydra 2 停用是否改變算圖輸出(§4 第三類)</td>
+<td>同一場景在 107 與 110 各算一張,逐像素比對</td>
+<td>有差異則確認屬第三類</td>
+</tr>
+<tr>
+<td>4</td>
+<td>§3 的棄用項仍可用</td>
+<td>在 110 上呼叫,看是否只有警告</td>
+<td>能動且 log 有 deprecation 訊息</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>omni.kit.window.viewport</code> 在 107 已不存在</td>
+<td>在 107 上嘗試啟用</td>
+<td>找不到該 extension</td>
+</tr>
+</tbody>
+</table></div>
+<p>第 3 條最值得做:它是唯一一條沒有任何錯誤訊息可依靠的,也是升級驗證最容易漏掉的一類。做完可以回頭補強 §4 那張表。</p>
+  </main>
+</div>
+<footer class="foot">
+  <a href="../../">總覽</a> · <a href="../../version-matrix.html">版本差異速查</a> · <a href="https://github.com/wicanr2/omniverse-kit-study">原始碼</a>
+</footer>
+</body>
+</html>
