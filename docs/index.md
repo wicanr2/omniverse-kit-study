@@ -46,7 +46,7 @@
 
 ## 這個 repo 的狀態
 
-骨架階段。目前 10 篇,主題骨架列在[根 README](https://github.com/wicanr2/omniverse-kit-study#主題骨架) 裡。
+主題骨架已補滿,共 10 篇。剩下的候選主題列在[根 README](https://github.com/wicanr2/omniverse-kit-study#主題骨架) 裡,每一群都標了還缺什麼。
 
 **本 repo 目前沒有自有的 Kit 環境**,十篇都是官方機制整理,篇首標明未實機驗證,並各自附了待驗清單([02 §8](common/02-extension-system/README.md)、[03 §8](common/03-carb-settings/README.md)、[04 §6](common/04-usd-stage-and-fabric/README.md)、[05 §6](common/05-omnigraph/README.md)、[06 §7](common/06-run-modes/README.md)、[07 §7](common/07-rendering-and-materials/README.md)、[08 §6](common/08-debugging/README.md)、[09 §5](common/09-omni-ui/README.md)、[10 §6](common/10-packaging-and-release/README.md))。拿到環境之後逐條升級。
 

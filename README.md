@@ -2,11 +2,11 @@
 
 NVIDIA **Omniverse Kit SDK 本體**的實戰教學——框架層,不是應用層。
 
-姊妹 repo [isaac-sim-study](https://github.com/wicanr2/isaac-sim-study) · [線上版](https://wicanr2.github.io/isaac-sim-study/)
+[線上版](https://wicanr2.github.io/omniverse-kit-study/) · 姊妹 repo [isaac-sim-study](https://github.com/wicanr2/isaac-sim-study)([線上版](https://wicanr2.github.io/isaac-sim-study/))
 
-> **狀態:骨架階段。** 目前 10 篇,工具鏈與分區已就緒。GitHub Pages 尚未開通,`docs/` 底下的 HTML 已建好,開通後即可直接用。
+> **狀態:主題骨架已補滿,共 10 篇。**
 >
-> **本 repo 目前沒有自有的 Kit 環境。** 十篇都是官方機制整理,篇首標明未實機驗證,並附待驗清單與各自的驗法。
+> **本 repo 目前沒有自有的 Kit 環境。** 十篇都是官方機制整理,篇首標明未實機驗證,並附待驗清單與各自的驗法——共 48 條,每條寫明怎麼驗、什麼算通過。拿到環境後逐條升級成實測結論。
 
 ## Kit 是框架,Isaac Sim 是搭在上面的應用
 
