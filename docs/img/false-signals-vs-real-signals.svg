@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 552" width="900" height="552"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="552" fill="#faf8f4"/>
+
+  <text x="45" y="32" font-size="15" fill="#3d3833" font-weight="600">Kit 這一層的東西壞掉時,多半安靜地回一個合法的值</text>
+  <text x="45" y="54" font-size="12.5" fill="#8a827a">所以每一層都要找到一個「能力在不在」的訊號,不能只看呼叫有沒有成功</text>
+
+  <line x1="45" y1="72" x2="855" y2="72" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="72" y="92" font-size="12.5" fill="#8a4a12">看起來像證據,其實不是</text>
+  <text x="490" y="92" font-size="12.5" fill="#1f6f63">真正該看的</text>
+  <line x1="45" y1="102" x2="855" y2="102" stroke="#cfc8bd" stroke-width="1"/>
+
+  <text x="47" y="132" font-size="11" fill="#a09890">02</text>
+  <text x="72" y="132" font-size="13.5" fill="#57514b">extension 啟用回傳成功</text>
+  <text x="490" y="132" font-size="13.5" fill="#3d3833">節點型別、API 這類能力在不在</text>
+  <line x1="45" y1="150" x2="855" y2="150" stroke="#e8e3da" stroke-width="1"/>
+
+  <text x="47" y="180" font-size="11" fill="#a09890">03</text>
+  <text x="72" y="180" font-size="13.5" fill="#57514b">設定讀得到那個鍵</text>
+  <text x="490" y="180" font-size="13.5" fill="#3d3833">設成極端值,行為有沒有跟著變</text>
+  <line x1="45" y1="198" x2="855" y2="198" stroke="#e8e3da" stroke-width="1"/>
+
+  <text x="47" y="228" font-size="11" fill="#a09890">04</text>
+  <text x="72" y="228" font-size="13.5" fill="#57514b">座標讀得到一個數字</text>
+  <text x="490" y="228" font-size="13.5" fill="#3d3833">你讀的是 USD 那份還是 Fabric 那份</text>
+  <line x1="45" y1="246" x2="855" y2="246" stroke="#e8e3da" stroke-width="1"/>
+
+  <text x="47" y="276" font-size="11" fill="#a09890">05</text>
+  <text x="72" y="276" font-size="13.5" fill="#57514b">物理時間在前進</text>
+  <text x="490" y="276" font-size="13.5" fill="#3d3833">節點被算了幾次,跨幀比對有沒有增加</text>
+  <line x1="45" y1="294" x2="855" y2="294" stroke="#e8e3da" stroke-width="1"/>
+
+  <text x="47" y="324" font-size="11" fill="#a09890">06</text>
+  <text x="72" y="324" font-size="13.5" fill="#57514b">串流連線建立起來了</text>
+  <text x="490" y="324" font-size="13.5" fill="#3d3833">影格有沒有連續送出,不是只有第一張</text>
+  <line x1="45" y1="342" x2="855" y2="342" stroke="#e8e3da" stroke-width="1"/>
+
+  <text x="47" y="372" font-size="11" fill="#a09890">07</text>
+  <text x="72" y="372" font-size="13.5" fill="#57514b">影片檔的參數完全正常</text>
+  <text x="490" y="372" font-size="13.5" fill="#3d3833">貼圖路徑、log、貼圖平均色</text>
+  <line x1="45" y1="390" x2="855" y2="390" stroke="#cfc8bd" stroke-width="1"/>
+
+  <!-- 正對照 -->
+  <rect x="45" y="410" width="810" height="76" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.4"/>
+  <text x="66" y="436" font-size="14" fill="#1f6f63" font-weight="600">右欄幾乎都是列舉查詢,而列舉查詢要配正對照</text>
+  <text x="66" y="460" font-size="13" fill="#57514b">查一個<tspan font-weight="600">確定存在</tspan>的東西當試紙。它若也回「沒有」,壞的是查法,不是東西。</text>
+  <text x="66" y="478" font-size="12.5" fill="#8a827a">一個回空的查詢,同時相容於「東西不在」與「我的查法有洞」兩個世界。</text>
+
+  <text x="45" y="520" font-size="13" fill="#8a4a12">先確定訊號是真的,再開始查原因。順序反過來會在錯誤的方向上花掉整個下午。</text>
+</svg>

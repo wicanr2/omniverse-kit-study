@@ -93,14 +93,19 @@ Kit 應用的行為幾乎都掛在同一棵設定樹上:視窗開不開、算圖
 **這是「本 repo 查到的」,不是「官方沒有」。** 不排除寫在別的頁面或別的版本。真的需要一個確定的答案時,量比查快:
 
 ```bash
-# 一、把當下的設定樹整棵 dump 出來(設定鍵名依版本可能不同,先確認它存在)
-kit <你的.kit檔> --/app/settings/dumpToFile=/tmp/settings.json --/app/quitAfter=1
+# 一、跑一個腳本把設定樹讀出來寫成檔案,跑一幀就退出
+kit <你的.kit檔> --exec dump_settings.py --/app/quitAfter=1
 
-# 二、同一個鍵,從兩個入口各給一次不同的值,看哪個留在 dump 裡
-kit <你的.kit檔> --/exts/my.ext/threshold=999 ...
+# 二、同一個鍵,從兩個入口各給一次不同的值,看哪個留下來
+kit <你的.kit檔> --exec dump_settings.py --/app/quitAfter=1 \
+    --/exts/my.ext/threshold=999
 ```
 
-單變數對照:一次只改一個入口,看 dump 出來的值是哪一個。要判定的入口有五個,兩兩比較即可排出全序。
+`--/app/quitAfter=<幀數>` 是官方的旗標,跑滿指定幀數就離開主迴圈,適合這種只要一份快照的用途。
+
+腳本那一側,官方說明是「You can interact with App, Extension, and User settings using the `ISettings` interface from the `carb.settings` module」。**本 repo 沒有查證具體的函式名與讀取整棵樹的寫法**,寫腳本時以手上版本的 `carb.settings` API 文件為準。
+
+單變數對照:一次只改一個入口,看讀出來的值是哪一個。要判定的入口有五個,兩兩比較即可排出全序。
 
 ⚠ **dump 出來看得到某個鍵,不代表 runtime 真的照它跑。** 這是 Kit 這一層的第三種常見假象——寫得進去不等於被採用。要證明某個設定真的生效,把它設成一個極端值,看行為有沒有跟著變。
 
