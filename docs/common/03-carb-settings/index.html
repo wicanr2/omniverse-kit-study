@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · carb settings:設定樹、先寫先贏,以及官方沒寫全的優先序 — Omniverse Kit 實戰筆記</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../../">Omniverse Kit 實戰筆記</a>
+  <nav class="tabs"><a href="../../">總覽</a><a href="../../common/" class="on">共通</a><a href="../../107/">Kit 107</a><a href="../../110/">Kit 110</a><a href="../../version-matrix.html">版本差異</a></nav>
+  <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
+</header>
+<div class="shell">
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../../common/03-carb-settings/" class="on"><span class="n">03</span>carb settings</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-根本問題幾百個旋鈕放在哪">1. 根本問題:幾百個旋鈕放在哪</a></li><li class="l2"><a href="#2-設定樹一個巢狀字典">2. 設定樹:一個巢狀字典</a></li><li class="l2"><a href="#3-settings-是先寫先贏">3. [settings] 是先寫先贏</a></li><li class="l2"><a href="#4-由此推得的啟動順序">4. 由此推得的啟動順序</a></li><li class="l2"><a href="#5-命令列----的形狀">5. 命令列 --/ 的形狀</a></li><li class="l2"><a href="#6-persistent會活過這次啟動的那些">6. /persistent:會活過這次啟動的那些</a></li><li class="l2"><a href="#7-完整的優先序官方沒有寫全">7. 完整的優先序,官方沒有寫全</a></li><li class="l2"><a href="#8-待驗清單">8. 待驗清單</a></li></ul></aside>
+  <main class="doc">
+<h1 id="03-carb-settings設定樹先寫先贏以及官方沒寫全的優先序">03 · carb settings:設定樹、先寫先贏,以及官方沒寫全的優先序</h1>
+<p>Kit 應用的行為幾乎都掛在同一棵設定樹上:視窗開不開、算圖用哪個後端、extension 去哪裡找、日誌多囉嗦。改它的方式有好幾種——命令列、<code>.kit</code> 檔、<code>extension.toml</code>、使用者設定檔——而它們碰在一起的時候誰贏,是這一層最常被問、也最容易搞錯的事。</p>
+<p>先講結論:<strong>同一個 extension 相依鏈上的 <code>[settings]</code> 是「先寫先贏」,而且套用順序是啟動順序的反向</strong>;至於命令列、<code>.kit</code>、使用者設定檔之間的完整優先序,官方文件沒有寫成一份完整表述(§7)。</p>
+<p align="center"><img src="../../img/settings-reverse-order.svg" width="850" alt="settings 在任何 extension 啟動前套用完,順序是啟動順序的反向,先寫先贏"></p>
+
+<blockquote>
+<p><strong>驗證狀態</strong>:本篇引用處給逐字原文。<strong>本 repo 沒有 Kit 環境,全篇未實機驗證</strong>,§8 是待驗清單。§4 是一段推論,已在文中標明它是推論而非官方直述。</p>
+</blockquote>
+<h2 id="1-根本問題幾百個旋鈕放在哪">1. 根本問題:幾百個旋鈕放在哪</h2>
+<p>應用由幾百個 extension 組成(<a href="../../common/02-extension-system/">02</a>)之後,設定會遇到一個結構問題:每個 extension 都有自己的旋鈕,而使用者、應用作者、extension 作者都想調同一批。</p>
+<p>各自存各自的檔會導致沒有人能一次看到全貌,也沒辦法從外面覆蓋。Kit 的做法是反過來:<strong>只有一棵樹,所有人都往同一棵樹寫</strong>,差別只在什麼時候寫、寫的優先權多高。</p>
+<h2 id="2-設定樹一個巢狀字典">2. 設定樹:一個巢狀字典</h2>
+<p>官方對它的定義很直白:</p>
+<blockquote>
+<p>"Settings is a runtime representation of typical configuration formats (like json, toml, xml), and is basically a nested dictionary of values."</p>
+</blockquote>
+<p>一個巢狀字典,鍵用 <code>/</code> 分層,例如 <code>/app/exts/folders</code>。TOML 裡寫成 <code>app.exts.folders</code>,命令列寫成 <code>--/app/exts/folders</code>,指的是同一個位置。</p>
+<p><code>extension.toml</code> 的 <code>[settings]</code> 段寫進去的東西落在樹根:</p>
+<blockquote>
+<p>"Everything under this section is applied to the root of the global <strong>Carbonite</strong> settings (<code>carb.settings.plugin</code>)."</p>
+</blockquote>
+<p>慣例上 extension 自己的設定放在 <code>exts</code> 命名空間底下、再接 extension 名,避免撞名也方便查找。</p>
+<h2 id="3-settings-是先寫先贏">3. <code>[settings]</code> 是先寫先贏</h2>
+<p>這是本篇最值得記住的一條,而且與直覺相反。官方原文:</p>
+<blockquote>
+<p>"An important detail is that settings are applied in reverse order of extension startup (before any extensions start) and they don't override each other."</p>
+</blockquote>
+<p>拆成三件事:</p>
+<p><strong>一、時機。</strong> 所有 <code>[settings]</code> 在<strong>任何 extension 啟動之前</strong>就套用完了。不是「輪到某個 extension 啟動時才套用它的設定」。所以 extension 在 <code>on_startup</code> 裡讀到的設定樹已經是最終狀態,包含那些啟動順序排在它後面的 extension 所寫的值。</p>
+<p><strong>二、順序。</strong> 套用順序是啟動順序的<strong>反向</strong>。</p>
+<p><strong>三、不覆蓋。</strong> 後套用的不會蓋掉已經有值的鍵。</p>
+<p>三件事合起來就是先寫先贏:反向套用讓啟動順序靠後的 extension 先寫,而先寫的那個贏。官方接著給了這個設計的用途:</p>
+<blockquote>
+<p>"Therefore a parent extension can specify settings for child extensions to use."</p>
+</blockquote>
+<p>父 extension 可以替它依賴的那些指定設定。這解釋了為什麼要設計成「不覆蓋」——如果後寫的會蓋掉先寫的,底層 extension 的預設值就會蓋掉上層應用的指定,而那是反的。</p>
+<p>實務上的意義:<strong>你的 <code>.kit</code> 應用檔寫的值,勝過它拉進來的那些 extension 自己的預設。</strong> 想調某個 extension 的設定,寫在自己的應用檔裡就有效,不必去改對方的 <code>extension.toml</code>。</p>
+<h2 id="4-由此推得的啟動順序">4. 由此推得的啟動順序</h2>
+<p><a href="../../common/02-extension-system/">02 §3</a> 留了一個沒有結論的問題:官方說啟用時「all dependents are enabled first」,而 dependent 一詞照字面是「依賴別人的那一方」,與「被依賴者先準備好」的預期相反。</p>
+<p>§3 這段機制可以把它推出來,<strong>推論如下,尚未實測</strong>:</p>
+<p>官方說父 extension 能替子指定設定,而這件事只有在「父的 <code>[settings]</code> 先寫進去」時才成立。先寫要靠反向套用,反向套用要成立的話,父在啟動順序上必須排在<strong>後面</strong>。也就是:</p>
+<blockquote>
+<p><strong>被依賴的先啟動,依賴別人的後啟動。</strong></p>
+</blockquote>
+<p>兩段官方敘述只有在這個讀法下彼此自洽。這也符合可用性的直覺——被依賴的東西要先準備好。</p>
+<p><strong>這是推論,不是官方直述。</strong> 驗法在 <a href="../../common/02-extension-system/">02 §8</a> 第 1 條:讀 log 裡 <code>[ext: ...] startup</code> 的先後即可判定。在驗到之前,凡是依賴啟動順序的結論都要標明它建立在這個推論上。</p>
+<h2 id="5-命令列----的形狀">5. 命令列 <code>--/</code> 的形狀</h2>
+<p>任何設定都能從命令列改:</p>
+<blockquote>
+<p>"Any setting can be changed via command line using <code>--/</code> prefix"</p>
+</blockquote>
+<p>格式是 <code>--/[path/to/setting]=[value]</code>,路徑用 <code>/</code> 分層並以 <code>--/</code> 開頭。</p>
+<p>陣列有兩種寫法:指定單一元素的索引,或整包給值 <code>[value0,value1,...]</code>。布林值大小寫不拘,<code>true</code> / <code>false</code> 可用,<code>0</code> / <code>1</code> 也會被當成整數轉過去。</p>
+<p>順帶記一下日誌旗標:<code>-v</code> 開 info、<code>-vv</code> 開 verbose。排查設定沒生效時,這兩個通常比猜快。</p>
+<h2 id="6-persistent會活過這次啟動的那些">6. <code>/persistent</code>:會活過這次啟動的那些</h2>
+<blockquote>
+<p>"All settings stored in a <code>/persistent</code> namespace persist between sessions. They are automatically stored to and loaded from <strong>user config</strong>."</p>
+</blockquote>
+<p><code>/persistent</code> 底下的東西會自動存進使用者設定檔,下次啟動再載回來。命名空間本身就是開關,不需要另外宣告。</p>
+<p>這帶來一個排查上的陷阱:<strong>同一台機器上「上次改過的值」會活著回來</strong>。在 A 機器重現不了 B 機器的問題時,兩邊的使用者設定檔是第一個要比對的地方,而不是程式碼。反過來說,要確保實驗乾淨,得先確認 <code>/persistent</code> 底下沒有殘留的舊值。</p>
+<h2 id="7-完整的優先序官方沒有寫全">7. 完整的優先序,官方沒有寫全</h2>
+<p><code>.kit</code> 檔、<code>extension.toml</code>、使用者設定檔、命令列、環境變數碰在一起時誰贏——<strong>本 repo 沒有在官方文件裡找到一段完整陳述這件事的文字</strong>。</p>
+<p>查過的地方:kit-manual 的 Configuration 頁、dev-guide 的 Settings 頁、kit-manual 的 Extensions in-depth 頁。找到的是分散的片段:<code>--/</code> 可以改任何設定、系統層級的設定檔可以覆蓋任何設定、<code>[settings]</code> 在相依鏈上先寫先贏(§3)。這幾條拼不出一張完整的優先序表。</p>
+<p><strong>這是「本 repo 查到的」,不是「官方沒有」。</strong> 不排除寫在別的頁面或別的版本。真的需要一個確定的答案時,量比查快:</p>
+<pre><code class="language-bash"># 一、把當下的設定樹整棵 dump 出來(設定鍵名依版本可能不同,先確認它存在)
+kit &lt;你的.kit檔&gt; --/app/settings/dumpToFile=/tmp/settings.json --/app/quitAfter=1
+
+# 二、同一個鍵,從兩個入口各給一次不同的值,看哪個留在 dump 裡
+kit &lt;你的.kit檔&gt; --/exts/my.ext/threshold=999 ...
+</code></pre>
+<p>單變數對照:一次只改一個入口,看 dump 出來的值是哪一個。要判定的入口有五個,兩兩比較即可排出全序。</p>
+<p>⚠ <strong>dump 出來看得到某個鍵,不代表 runtime 真的照它跑。</strong> 這是 Kit 這一層的第三種常見假象——寫得進去不等於被採用。要證明某個設定真的生效,把它設成一個極端值,看行為有沒有跟著變。</p>
+<h2 id="8-待驗清單">8. 待驗清單</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>待驗的斷言</th>
+<th>怎麼驗</th>
+<th>什麼算通過</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>[settings]</code> 先寫先贏(§3)</td>
+<td>做兩個 extension,父依賴子,兩邊的 <code>[settings]</code> 寫同一個鍵不同值,啟動後讀該鍵</td>
+<td>讀到父寫的值</td>
+</tr>
+<tr>
+<td>2</td>
+<td>設定在任何 extension 啟動前就套用完(§3)</td>
+<td>在最先啟動的 extension 的 <code>on_startup</code> 裡讀一個只由最後啟動者宣告的鍵</td>
+<td>讀得到值</td>
+</tr>
+<tr>
+<td>3</td>
+<td>被依賴者先啟動(§4 的推論)</td>
+<td>讀 log 裡 <code>[ext: ...] startup</code> 的先後</td>
+<td>被依賴的那個先出現</td>
+</tr>
+<tr>
+<td>4</td>
+<td>五個入口的完整優先序(§7)</td>
+<td>單變數對照,兩兩比較</td>
+<td>排得出一個穩定的全序</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>/persistent</code> 會跨 session 留存(§6)</td>
+<td>設一個 <code>/persistent/...</code> 的值,關掉重開再讀</td>
+<td>值還在,且能在使用者設定檔裡找到</td>
+</tr>
+<tr>
+<td>6</td>
+<td>dump 得到不等於生效(§7 的警語)</td>
+<td>挑一個有可觀察行為的設定,設極端值</td>
+<td>行為跟著變才算生效</td>
+</tr>
+</tbody>
+</table></div>
+<p>第 4 條做完就能補一張優先序表回 §7,那是這一篇目前最大的缺口。</p>
+  </main>
+</div>
+<footer class="foot">
+  <a href="../../">總覽</a> · <a href="../../version-matrix.html">版本差異速查</a> · <a href="https://github.com/wicanr2/omniverse-kit-study">原始碼</a>
+</footer>
+</body>
+</html>

@@ -17,7 +17,9 @@
 | 相容(版本) | Kit 的判準:兩個版本的**最左邊那個非零**的 major/minor/patch 相同才算相容。因此 `0.5.x` 與 `0.6.x` 不相容。 |
 | IExt | extension 的進入點介面。Python 是 `omni.ext.IExt` 的子類別,啟用時實例化並呼叫 `on_startup`,停用時 `on_shutdown`;C++ 對應 `onStartup` / `onShutdown`。 |
 | 熱重載(hot reload) | extension 系統偵測到已啟用 extension 的檔案變動時,把它停用再啟用;可能連帶重載相依樹的一大片。以 `reloadable` 設定關閉。 |
-| carb settings | Kit 的全域設定樹。啟動參數 `--/path/to/key=value`、`.kit` 檔的 `[settings]` 段、環境變數都是在改這棵樹。 |
+| carb settings | Kit 的全域設定樹,實質是一個巢狀字典。啟動參數 `--/path/to/key=value`、`.kit` 檔與 `extension.toml` 的 `[settings]` 段、使用者設定檔都是在改這棵樹。 |
+| 先寫先贏 | `[settings]` 的合併規則:在任何 extension 啟動前全部套用完,順序是啟動順序的反向,且**不互相覆蓋**。結果是相依鏈上層的值勝過下層。 |
+| `/persistent` | 設定樹裡會跨 session 留存的命名空間,自動存進使用者設定檔並在下次啟動載回。兩台機器行為不同時的第一個比對點。 |
 | carb | Carbonite,Kit 底層的 C++ 框架層,提供設定、外掛載入等基礎服務。`carb settings` 的名字由此而來。 |
 | USD | Universal Scene Description,Pixar 開源的 3D 場景描述格式,Kit 的原生場景格式。 |
 | Stage | 一份開啟中的 USD 場景樹,所有 Prim 掛在其上。 |

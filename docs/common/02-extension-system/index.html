@@ -13,7 +13,7 @@
   <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
 </header>
 <div class="shell">
-  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../../common/02-extension-system/" class="on"><span class="n">02</span>extension 系統</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-根本問題誰先載載哪一版從哪拿">1. 根本問題:誰先載、載哪一版、從哪拿</a></li><li class="l2"><a href="#2-相容的定義最左邊那個非零的數字">2. 相容的定義:最左邊那個非零的數字</a></li><li class="l2"><a href="#3-解析與啟用的順序">3. 解析與啟用的順序</a></li><li class="l2"><a href="#4-版本從哪裡拿三層來源">4. 版本從哪裡拿:三層來源</a></li><li class="l3"><a href="#41-開發路徑會忽略版本檢查">4.1 開發路徑會忽略版本檢查</a></li><li class="l2"><a href="#5-生命週期on_startup-與-on_shutdown">5. 生命週期:on_startup 與 on_shutdown</a></li><li class="l2"><a href="#6-熱重載會連帶重載一大片">6. 熱重載會連帶重載一大片</a></li><li class="l2"><a href="#7-啟用回傳成功不是它活著">7. 「啟用回傳成功」不是「它活著」</a></li><li class="l2"><a href="#8-待驗清單">8. 待驗清單</a></li></ul></aside>
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../../common/02-extension-system/" class="on"><span class="n">02</span>extension 系統</a></li><li><a href="../../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-根本問題誰先載載哪一版從哪拿">1. 根本問題:誰先載、載哪一版、從哪拿</a></li><li class="l2"><a href="#2-相容的定義最左邊那個非零的數字">2. 相容的定義:最左邊那個非零的數字</a></li><li class="l2"><a href="#3-解析與啟用的順序">3. 解析與啟用的順序</a></li><li class="l2"><a href="#4-版本從哪裡拿三層來源">4. 版本從哪裡拿:三層來源</a></li><li class="l3"><a href="#41-開發路徑會忽略版本檢查">4.1 開發路徑會忽略版本檢查</a></li><li class="l2"><a href="#5-生命週期on_startup-與-on_shutdown">5. 生命週期:on_startup 與 on_shutdown</a></li><li class="l2"><a href="#6-熱重載會連帶重載一大片">6. 熱重載會連帶重載一大片</a></li><li class="l2"><a href="#7-啟用回傳成功不是它活著">7. 「啟用回傳成功」不是「它活著」</a></li><li class="l2"><a href="#8-待驗清單">8. 待驗清單</a></li></ul></aside>
   <main class="doc">
 <h1 id="02-extension-系統相依解析來源優先序生命週期">02 · extension 系統:相依解析、來源優先序、生命週期</h1>
 <p>一個 Kit 應用由幾十到幾百個 extension 組成,而 <code>.kit</code> 檔裡通常只列十來個。中間那一大段——誰把剩下的拉進來、拉的是哪一版、從哪裡拿、誰先啟動——由 extension 系統決定。</p>
@@ -87,7 +87,8 @@
 <blockquote>
 <p>"If dependency resolution succeeds the whole dependency tree is enabled in-order so that all dependents are enabled first. The opposite is true for disabling extensions."</p>
 </blockquote>
-<p><strong>這句話的中文該怎麼落,本 repo 保留。</strong> 英文 dependent 指「依賴別人的那一方」,照字面讀是依賴方先啟用;但可用性的角度會期待被依賴的先準備好。官方措辭在這裡不夠明確,而兩種讀法對排查的意義相反,所以這裡不下結論,驗法列在 §8。</p>
+<p><strong>這句話的中文該怎麼落,要小心。</strong> 英文 dependent 指「依賴別人的那一方」,照字面讀是依賴方先啟用;但可用性的角度會期待被依賴的先準備好。官方措辭在這裡不夠明確,而兩種讀法對排查的意義相反。</p>
+<p><a href="../../common/03-carb-settings/">03 §4</a> 從設定的套用順序推出了一個方向:<strong>被依賴的先啟動,依賴別人的後啟動</strong>——官方關於設定的兩段敘述只有在這個讀法下彼此自洽。<strong>那仍然是推論</strong>,驗法列在 §8 第 1 條。在驗到之前,凡是依賴啟動順序的結論都要標明它建立在這個推論上。</p>
 <p>可以確定的是後半句:<strong>停用的順序與啟用相反</strong>。這一點在熱重載時會再出現一次(§6)。</p>
 <p>版本選擇上還有一條偏好:</p>
 <blockquote>

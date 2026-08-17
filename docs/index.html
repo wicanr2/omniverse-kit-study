@@ -19,7 +19,7 @@
 <p>大部分 Omniverse 的教學從應用開始講——開 Isaac Sim、開 USD Composer,點選單、拖物件。但那些應用共用的底座是同一套東西:extension 系統、carb settings、USD stage 與 Fabric、Hydra/RTX、OmniGraph、omni.ui。<strong>應用層查不到答案的問題,答案通常在這一層。</strong></p>
 <p>這裡整理的是 Kit SDK 本身的機制與踩坑,每篇從「要解決什麼根本問題」出發,並且標明哪些是官方機制、哪些是實測結論、哪些還只是推測。</p>
 <h2 id="三個入口">三個入口</h2>
-<p><strong><a href="common">共通:機制與方法論</a></strong> · 2 篇
+<p><strong><a href="common">共通:機制與方法論</a></strong> · 3 篇
 不綁 Kit 版本的機制與方法。Kit 的多數概念——extension 相依樹、設定樹的優先序、stage 與 Fabric 的分工——跨版本是同一套,所以不按版本分。</p>
 <p><strong><a href="107">Kit 107</a></strong> · 0 篇
 只在 107 系列成立的內容。Isaac Sim 5.0 / 5.1 底下就是這一版。</p>
@@ -60,11 +60,19 @@
 <td>改一個檔案就整個應用停頓一下</td>
 <td><a href="common/02-extension-system/">02 §6 熱重載</a></td>
 </tr>
+<tr>
+<td>設定寫了沒生效,或不確定誰蓋過誰</td>
+<td><a href="common/03-carb-settings/">03 §3 先寫先贏</a> → <a href="common/03-carb-settings/">03 §7 自己量優先序</a></td>
+</tr>
+<tr>
+<td>同一份程式碼在兩台機器行為不同</td>
+<td><a href="common/03-carb-settings/">03 §6 <code>/persistent</code> 會活過重開</a></td>
+</tr>
 </tbody>
 </table></div>
 <h2 id="這個-repo-的狀態">這個 repo 的狀態</h2>
-<p>骨架階段。目前 2 篇,主題骨架列在<a href="https://github.com/wicanr2/omniverse-kit-study#主題骨架">根 README</a> 裡。</p>
-<p><strong>本 repo 目前沒有自有的 Kit 環境</strong>,已寫的兩篇都是官方機制整理,篇首標明未實機驗證,並各自附了待驗清單(<a href="common/02-extension-system/">02 §8</a>)。拿到環境之後逐條升級。</p>
+<p>骨架階段。目前 3 篇,主題骨架列在<a href="https://github.com/wicanr2/omniverse-kit-study#主題骨架">根 README</a> 裡。</p>
+<p><strong>本 repo 目前沒有自有的 Kit 環境</strong>,三篇都是官方機制整理,篇首標明未實機驗證,並各自附了待驗清單(<a href="common/02-extension-system/">02 §8</a>、<a href="common/03-carb-settings/">03 §8</a>)。拿到環境之後逐條升級。</p>
 <p>機器人領域的內容在姊妹 repo <a href="https://github.com/wicanr2/isaac-sim-study">isaac-sim-study</a>(<a href="https://wicanr2.github.io/isaac-sim-study/">線上版</a>)。兩邊的分工判準寫在 <a href="common/01-kit-is-the-framework/">01 §6</a>。</p>
   </main>
 </div>

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" width="900" height="460"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="460" fill="#faf8f4"/>
+
+  <text x="45" y="32" font-size="14" fill="#3d3833">所有 <tspan font-family="ui-monospace,'DejaVu Sans Mono',monospace">[settings]</tspan> 在<tspan font-weight="600">任何 extension 啟動之前</tspan>就全部套用完</text>
+
+  <!-- 上軸:啟動順序 -->
+  <text x="45" y="76" font-size="13" fill="#8a827a">extension 啟動順序</text>
+  <line x1="45" y1="88" x2="855" y2="88" stroke="#cfc8bd" stroke-width="1"/>
+
+  <rect x="60" y="100" width="200" height="52" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="76" y="122" font-size="14" fill="#3d3833">C · 被依賴的</text>
+  <text x="76" y="141" font-size="12" fill="#8a827a">最底層,先起</text>
+
+  <rect x="350" y="100" width="200" height="52" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="366" y="122" font-size="14" fill="#3d3833">B · 中間層</text>
+
+  <rect x="640" y="100" width="200" height="52" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.6"/>
+  <text x="656" y="122" font-size="14" fill="#1f6f63">A · 依賴別人的</text>
+  <text x="656" y="141" font-size="12" fill="#8a827a">最上層,後起</text>
+
+  <path d="M260 126 L342 126" fill="none" stroke="#cfc8bd" stroke-width="1.3"/>
+  <path d="M346 126 l-9 -5 v10 z" fill="#cfc8bd"/>
+  <path d="M550 126 L632 126" fill="none" stroke="#cfc8bd" stroke-width="1.3"/>
+  <path d="M636 126 l-9 -5 v10 z" fill="#cfc8bd"/>
+
+  <!-- 交叉連線 -->
+  <line x1="160" y1="152" x2="740" y2="268" stroke="#b5651d" stroke-dasharray="4 4" stroke-width="1.1"/>
+  <line x1="450" y1="152" x2="450" y2="268" stroke="#b5651d" stroke-dasharray="4 4" stroke-width="1.1"/>
+  <line x1="740" y1="152" x2="160" y2="268" stroke="#b5651d" stroke-dasharray="4 4" stroke-width="1.1"/>
+
+  <text x="470" y="216" font-size="13" fill="#8a4a12">套用順序是啟動順序的反向</text>
+
+  <!-- 下軸:套用順序 -->
+  <rect x="60" y="268" width="200" height="52" rx="6" fill="#e8f0ee" stroke="#1f6f63" stroke-width="1.6"/>
+  <text x="76" y="290" font-size="14" fill="#1f6f63">A 的 [settings]</text>
+  <text x="76" y="309" font-size="12" fill="#1f6f63">最先寫進設定樹</text>
+
+  <rect x="350" y="268" width="200" height="52" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="366" y="290" font-size="14" fill="#3d3833">B 的 [settings]</text>
+
+  <rect x="640" y="268" width="200" height="52" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="656" y="290" font-size="14" fill="#3d3833">C 的 [settings]</text>
+  <text x="656" y="309" font-size="12" fill="#8a827a">最後才輪到</text>
+
+  <path d="M260 294 L342 294" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M346 294 l-9 -5 v10 z" fill="#8a827a"/>
+  <path d="M550 294 L632 294" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M636 294 l-9 -5 v10 z" fill="#8a827a"/>
+
+  <line x1="45" y1="332" x2="855" y2="332" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="45" y="356" font-size="13" fill="#8a827a">settings 套用順序</text>
+
+  <!-- 結論 -->
+  <rect x="45" y="376" width="810" height="62" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.5"/>
+  <text x="64" y="400" font-size="14" fill="#3d3833">同一個鍵先寫先贏——後面套用的<tspan font-weight="600">不會覆蓋</tspan>已經有值的鍵。</text>
+  <text x="64" y="424" font-size="14" fill="#1f6f63">所以上層的 A 贏過底層的 C:父 extension 可以替它依賴的那些指定設定。</text>
+</svg>

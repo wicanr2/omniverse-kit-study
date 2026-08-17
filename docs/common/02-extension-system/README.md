@@ -58,7 +58,9 @@ extension 系統就是這三個問題的答案。下面四節分別是版本規�
 
 > "If dependency resolution succeeds the whole dependency tree is enabled in-order so that all dependents are enabled first. The opposite is true for disabling extensions."
 
-**這句話的中文該怎麼落,本 repo 保留。** 英文 dependent 指「依賴別人的那一方」,照字面讀是依賴方先啟用;但可用性的角度會期待被依賴的先準備好。官方措辭在這裡不夠明確,而兩種讀法對排查的意義相反,所以這裡不下結論,驗法列在 §8。
+**這句話的中文該怎麼落,要小心。** 英文 dependent 指「依賴別人的那一方」,照字面讀是依賴方先啟用;但可用性的角度會期待被依賴的先準備好。官方措辭在這裡不夠明確,而兩種讀法對排查的意義相反。
+
+[03 §4](../03-carb-settings/README.md) 從設定的套用順序推出了一個方向:**被依賴的先啟動,依賴別人的後啟動**——官方關於設定的兩段敘述只有在這個讀法下彼此自洽。**那仍然是推論**,驗法列在 §8 第 1 條。在驗到之前,凡是依賴啟動順序的結論都要標明它建立在這個推論上。
 
 可以確定的是後半句:**停用的順序與啟用相反**。這一點在熱重載時會再出現一次(§6)。
 
