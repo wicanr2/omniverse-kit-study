@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · USD stage 與 Fabric:兩份真值,以及你正在讀哪一份 — Omniverse Kit 實戰筆記</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../../">Omniverse Kit 實戰筆記</a>
+  <nav class="tabs"><a href="../../">總覽</a><a href="../../common/" class="on">共通</a><a href="../../107/">Kit 107</a><a href="../../110/">Kit 110</a><a href="../../version-matrix.html">版本差異</a></nav>
+  <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
+</header>
+<div class="shell">
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../../common/04-usd-stage-and-fabric/" class="on"><span class="n">04</span>USD stage 與 Fabric</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-根本問題usd-為組合而生不為每幀查詢而生">1. 根本問題:USD 為組合而生,不為每幀查詢而生</a></li><li class="l2"><a href="#2-fabric-的答案">2. Fabric 的答案</a></li><li class="l2"><a href="#3-資料只往一個方向流">3. 資料只往一個方向流</a></li><li class="l2"><a href="#4-fabric-裡有沒有值是條件不是前提">4. Fabric 裡有沒有值,是條件不是前提</a></li><li class="l2"><a href="#5-你正在讀哪一份">5. 你正在讀哪一份</a></li><li class="l2"><a href="#6-待驗清單">6. 待驗清單</a></li></ul></aside>
+  <main class="doc">
+<h1 id="04-usd-stage-與-fabric兩份真值以及你正在讀哪一份">04 · USD stage 與 Fabric:兩份真值,以及你正在讀哪一份</h1>
+<p>模擬跑了十分鐘,程式讀出來的物件座標一動也沒動。沒有例外、沒有錯誤訊息,那個數字看起來完全合理——它只是回答了另一個問題。</p>
+<p>Kit 執行期,同一個場景的資料同時存在於兩個地方,而兩邊都不會因為「你問錯人了」而報錯。</p>
+<p align="center"><img src="../../img/usd-stage-vs-fabric.svg" width="850" alt="USD stage 與 Fabric 的分工、單向的資料流,以及兩種讀取路徑"></p>
+
+<blockquote>
+<p><strong>驗證狀態</strong>:機制引用官方 USDRT 文件逐字。<strong>本 repo 沒有 Kit 環境,未實機驗證</strong>;§4 引的實測樣本來自姊妹 repo 在 Isaac Sim 5.1 上的觀察,已標明來源與組態。§6 是待驗清單。</p>
+</blockquote>
+<h2 id="1-根本問題usd-為組合而生不為每幀查詢而生">1. 根本問題:USD 為組合而生,不為每幀查詢而生</h2>
+<p>USD 的設計目標官方寫得很清楚:</p>
+<blockquote>
+<p>"USD is Pixar's library that allows large-scale scenes to be composed from hundreds or thousands of component layers and modified using non-destructive operations."</p>
+</blockquote>
+<p>上千個圖層組合起來、非破壞性編輯——這是為了讓一大群人協作編輯同一個場景。代價落在查詢上:找「所有某型別的 prim」或「某個名字的屬性」得走訪整個 stage,官方給的複雜度是 <code>O(n) - traversal of entire stage</code>,寫入速度標的是 <code>Slow</code>。</p>
+<p>編輯場景時這個代價無所謂,一秒鐘做不到一次。但算圖每秒要做六十次,物理每秒可能上百次。<strong>同一套資料結構同時滿足「好編輯」與「每幀查一遍」是做不到的</strong>,兩邊要的東西相反。</p>
+<h2 id="2-fabric-的答案">2. Fabric 的答案</h2>
+<p>於是有第二份:</p>
+<blockquote>
+<p>"Fabric is the Omniverse library that enables high-performance creation, modification, and access of scene data, as well as communication of scene data between CPU and GPU and other Fabric clients on a network."</p>
+</blockquote>
+<p>同一份官方比較表裡,Fabric 的查找成本是 <code>O(1) - query</code>、寫入速度是 <code>Fastest</code>,而儲存性質是 <strong><code>Transient, in-memory only</code></strong>。</p>
+<p>存取它的 API 刻意做成 USD 的樣子:</p>
+<blockquote>
+<p>"USDRT Scenegraph API is an Omniverse API that mirrors the USD API (and is pin-compatible in most cases), but reads and writes data to and from Fabric instead of USD."</p>
+</blockquote>
+<p>介面照著 USD 抄、多數情況可以直接對換,但<strong>讀寫的對象換了一個</strong>。這個設計讓移植容易,同時讓「我到底在讀哪一份」變得不容易從程式碼看出來——兩邊的呼叫長得幾乎一樣。</p>
+<h2 id="3-資料只往一個方向流">3. 資料只往一個方向流</h2>
+<p>Fabric 的內容從哪來:</p>
+<blockquote>
+<p>"Data in Fabric can be populated from the local composed USD stage, but may also be generated procedurally or populated over the network."</p>
+</blockquote>
+<p>可以從 USD stage 填充,但也可以是程式生的、或從網路來的。所以 Fabric 裡有的東西<strong>不一定在 USD stage 上有對應</strong>。</p>
+<p>反方向則沒有:</p>
+<blockquote>
+<p>"Fabric is a transient data store on top of USD, so values set in Fabric are not automatically pushed back to the USD stage."</p>
+</blockquote>
+<p><strong>寫進 Fabric 的值不會自動回到 USD stage。</strong> 這是設計本身,不是遺漏——Fabric 存在的理由之一就是讓各個系統交換資料時不必回寫 USD。</p>
+<p>由此得到兩條實務推論:</p>
+<ul>
+<li>在 Fabric 上改了東西然後存檔,<strong>存出來的檔案裡不會有那些改動</strong>,除非明確寫回 USD。</li>
+<li>讀 USD stage 拿到的是「當初被寫進去的值」。模擬跑再久、Fabric 那邊變化再大,沒有人寫回去,它就不會變。</li>
+</ul>
+<p>啟用 Fabric Scene Delegate 的情況下,USD 那一側的改動會即時反映過去:"Fabric is populated from the USD Stage while Fabric Scene Delegate is enabled",而且 "any transform change on any prim in USD is immediately reflected as an update in Fabric"。方向依然是 USD → Fabric。</p>
+<h2 id="4-fabric-裡有沒有值是條件不是前提">4. Fabric 裡有沒有值,是條件不是前提</h2>
+<p>這一節是本篇最容易踩的地方。</p>
+<p>「Fabric 是執行期的即時資料」聽起來像是「任何 prim 隨時都能從 Fabric 讀到最新位置」。實際上一個 prim 在 Fabric 上有沒有世界變換,取決於好幾個條件。</p>
+<p>官方描述在 Fabric Scene Delegate 下從 USD 填充時的行為是:"every Boundable prim has two new attributes created in Fabric"。其中 <code>omni:fabric:worldMatrix</code> 是 "the local-to-world transform of the prim, as a <code>GfMatrix4d</code>",性質標的是 <strong>computed, cached, read-only</strong>,而且 "updated when <code>updateWorldXforms()</code> is called"。</p>
+<p>拆出來的條件:Fabric Scene Delegate 要啟用、prim 要是 Boundable、世界變換要在 <code>updateWorldXforms()</code> 被呼叫之後才是新的。任何一條不成立,那個值就可能不存在或是舊的。</p>
+<p>查詢用的 <code>RtXformable::HasWorldXform()</code>,官方定義是:</p>
+<blockquote>
+<p>"Check if the Fabric prim has any world transform attributes"</p>
+</blockquote>
+<p><strong>它問的是「這個 prim 在 Fabric 上有沒有被寫入 world transform 屬性」,不是「有沒有同步過」的旗標。</strong> 值的來源可以是明確建立、<code>SetWorldXformFromUsd()</code>,或模擬端寫入。</p>
+<p>姊妹 repo 在 Isaac Sim 5.1 的一個場景組態上實測到的結果:</p>
+<pre><code>probe_pose target=/World/RT-A/main/fork_liftA1 → HasWorldXform=False
+probe_pose target=/World/RT-A/main/fork_tilt   → HasWorldXform=False
+</code></pre>
+<p>那個場景的 Fabric 沒有替那些 prim 填世界變換。<strong>這是該組態下的觀察,不是通則</strong>——換一個應用、換一組 extension、FSD 開或關,結果可以不同。可以當通則用的是它的形狀:</p>
+<blockquote>
+<p>Fabric 查得到某個 prim 的世界變換,是一個<strong>要先確認的條件</strong>,不是可以假設的前提。</p>
+</blockquote>
+<p>Kit 106.0 起 Fabric Scene Delegate 在 Composer 與 Explorer 預設啟用,但那是那兩個應用的組態,不是 Kit 的普遍保證。自己的 <code>.kit</code> 應用開不開,由自己的設定決定(<a href="../../common/03-carb-settings/">03</a>)。</p>
+<h2 id="5-你正在讀哪一份">5. 你正在讀哪一份</h2>
+<p>判斷方法很直接:看你用的是哪一組 API。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>你呼叫的</th>
+<th>讀的是</th>
+<th>拿到什麼</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pxr.Usd</code> / <code>pxr.UsdGeom</code> 那一套</td>
+<td>USD stage</td>
+<td>authored 值。沒人寫回去就不會變</td>
+</tr>
+<tr>
+<td><code>usdrt</code> 的對應類別</td>
+<td>Fabric</td>
+<td>執行期值,前提是那個 prim 在 Fabric 上真的有</td>
+</tr>
+</tbody>
+</table></div>
+<p>兩邊都不會因為問錯而報錯,因為兩邊回的都是合法的數字。</p>
+<p>排查時的動作順序:<strong>先確認自己讀的是哪一份,再懷疑值不對</strong>。同一個 prim 用兩條路徑各讀一次、把兩個值印出來,比讀程式碼快。兩個值不同不代表有 bug——那正是設計。</p>
+<p>這與 <a href="../../common/02-extension-system/">02 §7</a> 的「啟用回傳成功不是它活著」、<a href="../../common/03-carb-settings/">03 §7</a> 的「dump 得到不等於被採用」是同一個家族的問題:<strong>回傳值合法,不代表它回答了你問的問題</strong>。Kit 這一層的多數難查問題都長這個樣子。</p>
+<h2 id="6-待驗清單">6. 待驗清單</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>待驗的斷言</th>
+<th>怎麼驗</th>
+<th>什麼算通過</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>寫進 Fabric 不會回到 USD(§3)</td>
+<td>用 <code>usdrt</code> 改一個 prim 的變換,再用 <code>pxr.Usd</code> 讀同一個屬性,並存檔檢查</td>
+<td>USD 側的值不變,存出的檔案也沒有那個改動</td>
+</tr>
+<tr>
+<td>2</td>
+<td>USD 側改動即時反映到 Fabric(§3)</td>
+<td>FSD 啟用下改 USD 的 transform,立刻用 <code>usdrt</code> 讀</td>
+<td>讀到新值</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>HasWorldXform</code> 在預設純 Kit 應用上是否為 True(§4)</td>
+<td>起一個最小 <code>.kit</code> 應用,對場景裡的 Boundable prim 逐一查</td>
+<td>記錄 True/False 的比例與 FSD 開關的對應</td>
+</tr>
+<tr>
+<td>4</td>
+<td>FSD 關閉時 Fabric 是否仍被填充(§4)</td>
+<td>同上,切換 FSD 設定各跑一次</td>
+<td>兩次結果不同則確認 FSD 是條件之一</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>updateWorldXforms()</code> 之後值才更新(§4)</td>
+<td>改 USD transform,不呼叫該函式先讀一次,呼叫後再讀</td>
+<td>兩次值不同</td>
+</tr>
+</tbody>
+</table></div>
+<p>第 3 條做完可以把 §4 的實測樣本從「Isaac Sim 上的一個組態」升級成「純 Kit 環境下的通則或反例」,那是這一篇目前最大的缺口。</p>
+<p>⚠ 這五條全部是列舉或狀態查詢,<strong>每一條都要配正對照</strong>(<a href="../../common/02-extension-system/">02 §7</a>):拿一個確定有值的 prim 當試紙。它若也回「沒有」,壞的是查法,不是資料。</p>
+  </main>
+</div>
+<footer class="foot">
+  <a href="../../">總覽</a> · <a href="../../version-matrix.html">版本差異速查</a> · <a href="https://github.com/wicanr2/omniverse-kit-study">原始碼</a>
+</footer>
+</body>
+</html>

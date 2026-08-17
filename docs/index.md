@@ -6,7 +6,7 @@
 
 ## 三個入口
 
-**[共通:機制與方法論](common/)** · 3 篇
+**[共通:機制與方法論](common/)** · 4 篇
 不綁 Kit 版本的機制與方法。Kit 的多數概念——extension 相依樹、設定樹的優先序、stage 與 Fabric 的分工——跨版本是同一套,所以不按版本分。
 
 **[Kit 107](107/)** · 0 篇
@@ -30,11 +30,13 @@
 | 改一個檔案就整個應用停頓一下 | [02 §6 熱重載](common/02-extension-system/README.md) |
 | 設定寫了沒生效,或不確定誰蓋過誰 | [03 §3 先寫先贏](common/03-carb-settings/README.md) → [03 §7 自己量優先序](common/03-carb-settings/README.md) |
 | 同一份程式碼在兩台機器行為不同 | [03 §6 `/persistent` 會活過重開](common/03-carb-settings/README.md) |
+| 模擬在跑,讀出來的座標卻一直不變 | [04 §5 你正在讀哪一份](common/04-usd-stage-and-fabric/README.md) |
+| 改完存檔,改動不見了 | [04 §3 資料只往一個方向流](common/04-usd-stage-and-fabric/README.md) |
 
 ## 這個 repo 的狀態
 
-骨架階段。目前 3 篇,主題骨架列在[根 README](https://github.com/wicanr2/omniverse-kit-study#主題骨架) 裡。
+骨架階段。目前 4 篇,主題骨架列在[根 README](https://github.com/wicanr2/omniverse-kit-study#主題骨架) 裡。
 
-**本 repo 目前沒有自有的 Kit 環境**,三篇都是官方機制整理,篇首標明未實機驗證,並各自附了待驗清單([02 §8](common/02-extension-system/README.md)、[03 §8](common/03-carb-settings/README.md))。拿到環境之後逐條升級。
+**本 repo 目前沒有自有的 Kit 環境**,四篇都是官方機制整理,篇首標明未實機驗證,並各自附了待驗清單([02 §8](common/02-extension-system/README.md)、[03 §8](common/03-carb-settings/README.md)、[04 §6](common/04-usd-stage-and-fabric/README.md))。拿到環境之後逐條升級。
 
 機器人領域的內容在姊妹 repo [isaac-sim-study](https://github.com/wicanr2/isaac-sim-study)([線上版](https://wicanr2.github.io/isaac-sim-study/))。兩邊的分工判準寫在 [01 §6](common/01-kit-is-the-framework/README.md)。

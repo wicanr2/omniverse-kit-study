@@ -4,9 +4,9 @@ NVIDIA **Omniverse Kit SDK 本體**的實戰教學——框架層,不是應用�
 
 姊妹 repo [isaac-sim-study](https://github.com/wicanr2/isaac-sim-study) · [線上版](https://wicanr2.github.io/isaac-sim-study/)
 
-> **狀態:骨架階段。** 目前 3 篇,工具鏈與分區已就緒。GitHub Pages 尚未開通,`docs/` 底下的 HTML 已建好,開通後即可直接用。
+> **狀態:骨架階段。** 目前 4 篇,工具鏈與分區已就緒。GitHub Pages 尚未開通,`docs/` 底下的 HTML 已建好,開通後即可直接用。
 >
-> **本 repo 目前沒有自有的 Kit 環境。** 三篇都是官方機制整理,篇首標明未實機驗證,並附待驗清單與各自的驗法。
+> **本 repo 目前沒有自有的 Kit 環境。** 四篇都是官方機制整理,篇首標明未實機驗證,並附待驗清單與各自的驗法。
 
 ## Kit 是框架,Isaac Sim 是搭在上面的應用
 
@@ -29,12 +29,12 @@ Isaac Sim       =  搭在 Kit 上的「一個應用」
 
 | 分區 | 篇數 | 收什麼 |
 |---|---|---|
-| [`docs/common/`](docs/common/) | 3 | 不綁 Kit 版本的機制與方法論 |
+| [`docs/common/`](docs/common/) | 4 | 不綁 Kit 版本的機制與方法論 |
 | [`docs/107/`](docs/107/) | 0 | 只在 Kit 107 成立的(Isaac Sim 5.0 / 5.1) |
 | [`docs/110/`](docs/110/) | 0 | 只在 Kit 110 成立的(Isaac Sim 6.0 / 6.0.1) |
 
 分區判準是「結論依不依賴 Kit 版本」,不是標題帶哪個版號。目前
-3 篇裡真正綁死 Kit 版本的有 0 篇,所以兩個版本區都還是空的。
+4 篇裡真正綁死 Kit 版本的有 0 篇,所以兩個版本區都還是空的。
 
 [版本差異速查](docs/version-matrix.md) 收 Kit ↔ Isaac Sim 的版本對應與已知跨版本變動,每列標證據等級。
 
@@ -45,6 +45,7 @@ Isaac Sim       =  搭在 Kit 上的「一個應用」
 | 01 | [Kit 是框架,Isaac Sim 是搭在上面的應用](docs/common/01-kit-is-the-framework/README.md) |
 | 02 | [extension 系統:相依解析、來源優先序、生命週期](docs/common/02-extension-system/README.md) |
 | 03 | [carb settings:設定樹、先寫先贏,以及官方沒寫全的優先序](docs/common/03-carb-settings/README.md) |
+| 04 | [USD stage 與 Fabric:兩份真值,以及你正在讀哪一份](docs/common/04-usd-stage-and-fabric/README.md) |
 
 ## 這個 repo 收什麼
 
@@ -71,7 +72,7 @@ Isaac Sim       =  搭在 Kit 上的「一個應用」
 | **Kit 是什麼** | ✅ 01 框架與應用的關係;`.kit` app 檔的結構與繼承;啟動流程與各層職責邊界 |
 | **extension** | ✅ 02 `extension.toml`、相依解析、registry、生命週期、「啟用成功」不是它活著;尚缺:離線 / air-gapped registry |
 | **carb settings** | ✅ 03 設定樹、`--/path=value`、`/persistent`、`[settings]` 先寫先贏;尚缺:五個入口的完整優先序(官方沒寫全,要自己量) |
-| **USD 與 Fabric** | stage 與 Fabric 是兩份真值;什麼時候讀哪一份 |
+| **USD 與 Fabric** | ✅ 04 兩份真值、單向資料流、`HasWorldXform` 的正確語意;尚缺:Fabric 直接 authoring、跨網路填充 |
 | **OmniGraph** | 節點型別是真的 USD 屬性;連線就是 attribute connection;圖跟著主迴圈走,不跟著物理走 |
 | **omni.ui** | UI 框架與 extension 的關係;headless 下哪些東西不存在 |
 | **渲染** | Hydra 與 RTX;MDL 材質;缺貼圖不是素色是純黑 |

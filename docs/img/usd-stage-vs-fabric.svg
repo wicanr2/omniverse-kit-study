@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="520" fill="#faf8f4"/>
+
+  <text x="45" y="30" font-size="14" fill="#8a827a">同一個場景,兩份資料,而它們不保證一致</text>
+
+  <!-- USD Stage -->
+  <rect x="45" y="48" width="340" height="184" rx="6" fill="#ffffff" stroke="#57514b" stroke-width="1.5"/>
+  <text x="66" y="76" font-size="16" fill="#3d3833" font-weight="600">USD Stage</text>
+  <text x="66" y="96" font-size="12.5" fill="#8a827a">為組合大場景而生,非破壞性編輯</text>
+  <line x1="66" y1="108" x2="364" y2="108" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="66" y="132" font-size="13" fill="#57514b">存得下來,關掉再開還在</text>
+  <text x="66" y="156" font-size="13" fill="#57514b">查一個屬性要走訪整個 stage</text>
+  <text x="66" y="180" font-size="13" fill="#57514b">寫入慢</text>
+  <text x="66" y="210" font-size="13" fill="#8a4a12">讀到的是「當初被擺在哪」</text>
+
+  <!-- Fabric -->
+  <rect x="515" y="48" width="340" height="184" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.5"/>
+  <text x="536" y="76" font-size="16" fill="#1f6f63" font-weight="600">Fabric</text>
+  <text x="536" y="96" font-size="12.5" fill="#8a827a">為每幀高速讀寫而生,CPU/GPU 共用</text>
+  <line x1="536" y1="108" x2="834" y2="108" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="536" y="132" font-size="13" fill="#57514b">只在記憶體裡,關掉就沒了</text>
+  <text x="536" y="156" font-size="13" fill="#57514b">依型別或屬性名查是 O(1)</text>
+  <text x="536" y="180" font-size="13" fill="#57514b">寫入最快</text>
+  <text x="536" y="210" font-size="13" fill="#8a4a12">不保證每個 prim 都有值</text>
+
+  <!-- 中間流向 -->
+  <path d="M392 116 L508 116" fill="none" stroke="#1f6f63" stroke-width="1.6"/>
+  <path d="M512 116 l-9 -5 v10 z" fill="#1f6f63"/>
+  <text x="396" y="106" font-size="11.5" fill="#1f6f63">填充</text>
+
+  <path d="M508 176 L400 176" fill="none" stroke="#b5651d" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <line x1="446" y1="168" x2="462" y2="184" stroke="#b5651d" stroke-width="2"/>
+  <line x1="462" y1="168" x2="446" y2="184" stroke="#b5651d" stroke-width="2"/>
+  <text x="396" y="200" font-size="11.5" fill="#8a4a12">不推回</text>
+
+  <!-- 讀取路徑 -->
+  <text x="45" y="284" font-size="14" fill="#3d3833">你手上那個 API 讀的是哪一份,決定你拿到什麼</text>
+  <line x1="45" y1="296" x2="855" y2="296" stroke="#cfc8bd" stroke-width="1"/>
+
+  <rect x="45" y="312" width="340" height="82" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="66" y="336" font-size="13.5" fill="#3d3833" font-family="ui-monospace,'DejaVu Sans Mono',monospace">pxr.Usd / UsdGeom</text>
+  <text x="66" y="358" font-size="12.5" fill="#57514b">走 USD stage。模擬跑再久,</text>
+  <text x="66" y="378" font-size="12.5" fill="#57514b">沒人寫回去它就不會變</text>
+
+  <rect x="515" y="312" width="340" height="82" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="536" y="336" font-size="13.5" fill="#1f6f63" font-family="ui-monospace,'DejaVu Sans Mono',monospace">usdrt (USDRT Scenegraph)</text>
+  <text x="536" y="358" font-size="12.5" fill="#57514b">介面照著 USD 抄,大多可直接對換,</text>
+  <text x="536" y="378" font-size="12.5" fill="#57514b">但讀寫的是 Fabric</text>
+
+  <!-- 結論 -->
+  <line x1="45" y1="424" x2="855" y2="424" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="45" y="450" font-size="14" fill="#3d3833">兩邊都不會報錯,因為兩邊回的都是合法的數字。它們只是在回答不同的問題。</text>
+  <text x="45" y="478" font-size="13.5" fill="#8a4a12">Fabric 查得到某個 prim 的世界變換,是一個要先確認的條件,不是可以假設的前提。</text>
+</svg>

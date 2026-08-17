@@ -13,12 +13,12 @@
   <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
 </header>
 <div class="shell">
-  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li></ul></aside>
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li></ul></aside>
   <main class="doc">
 <h1 id="共通機制與方法論">共通:機制與方法論</h1>
 <p>不綁 Kit 版本的內容。Kit 的多數核心概念跨版本是同一套——extension 相依樹怎麼解析、設定樹誰蓋過誰、stage 與 Fabric 為什麼是兩份真值——結論不隨版本改變的就收在這裡,不複製成兩份。</p>
 <p>版本一改就不成立的,收到 <a href="../107">Kit 107</a> 或 <a href="../110">Kit 110</a>。</p>
-<p>這一區的 3 篇:</p>
+<p>這一區的 4 篇:</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -42,6 +42,11 @@
 <td>03</td>
 <td><a href="../common/03-carb-settings/">carb settings:設定樹、先寫先贏</a></td>
 <td><code>[settings]</code> 在任何 extension 啟動前套用完,順序反向、先寫先贏;完整優先序官方沒寫全,怎麼自己量</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="../common/04-usd-stage-and-fabric/">USD stage 與 Fabric:兩份真值</a></td>
+<td>資料只從 USD 流向 Fabric,不會自動回頭;Fabric 上有沒有值是條件不是前提</td>
 </tr>
 </tbody>
 </table></div>

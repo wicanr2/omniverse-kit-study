@@ -24,7 +24,11 @@
 | USD | Universal Scene Description,Pixar 開源的 3D 場景描述格式,Kit 的原生場景格式。 |
 | Stage | 一份開啟中的 USD 場景樹,所有 Prim 掛在其上。 |
 | Prim | USD 場景樹的節點(primitive):Mesh、Xform、Light、Physics Scene 等。 |
-| Fabric | Kit 的執行期場景資料層(usdrt)。與 USD stage 是**兩份真值**,讀寫時要清楚自己在動哪一份。 |
+| Fabric | Kit 的高效能場景資料層,性質是 **transient、只在記憶體裡**。與 USD stage 是**兩份真值**:可從 USD 填充,但寫進 Fabric 的值不會自動推回 USD。 |
+| USDRT Scenegraph | 存取 Fabric 的 API。介面照著 USD 抄、多數情況可直接對換,但讀寫對象是 Fabric 而非 USD stage。 |
+| Fabric Scene Delegate(FSD) | 以 Fabric 為資料來源的 Hydra scene delegate。啟用時 Fabric 由 USD stage 填充,USD 的 transform 變更會即時反映過去。 |
+| `omni:fabric:worldMatrix` | FSD 下 Boundable prim 在 Fabric 上的 local-to-world 變換。性質是 computed / cached / read-only,在 `updateWorldXforms()` 被呼叫時更新。 |
+| `HasWorldXform()` | 查「這個 prim 在 Fabric 上有沒有被寫入 world transform 屬性」。**不是**「有沒有同步過」的旗標。 |
 | Hydra | USD 的算圖抽象層,把場景資料交給後端算圖器。 |
 | RTX | NVIDIA 的即時光線追蹤算圖後端,Kit 預設的 Hydra 算圖器之一。 |
 | MDL(.mdl) | NVIDIA Material Definition Language,Omniverse 的材質格式。 |
