@@ -31,7 +31,9 @@
 | `HasWorldXform()` | 查「這個 prim 在 Fabric 上有沒有被寫入 world transform 屬性」。**不是**「有沒有同步過」的旗標。 |
 | Hydra | USD 的算圖抽象層,把場景資料交給後端算圖器。 |
 | RTX | NVIDIA 的即時光線追蹤算圖後端,Kit 預設的 Hydra 算圖器之一。 |
-| MDL(.mdl) | NVIDIA Material Definition Language,Omniverse 的材質格式。 |
+| MDL(.mdl) | NVIDIA Material Definition Language,Omniverse 的材質格式。模組找不到時材質整個沒解析成功,退回單一顏色(觀察到多為紅色),與「缺貼圖變純黑」是不同的失效。 |
+| render delegate | Hydra 底下實際負責畫的後端,RTX 是其中一個。同一場景換後端的表現可以不同,回報渲染問題要標明用的是哪一個。 |
+| `visibility` | USD 上控制可見性的屬性,**只影響算圖,不改變碰撞**。設為不可見的東西照樣擋得住物體。 |
 | OmniGraph | Kit 的視覺化節點圖框架。節點是 prim、型別是 `node:type` 屬性、連線是 USD 的 attribute connection,所以整張圖存在 USD 場景裡。屬性宣告在 USD,節點實際使用的值在 Fabric。 |
 | `node:type` | 節點 prim 上標明型別的 token,值的前綴是提供該型別的 extension 名。搭配 `node:typeVersion`,後者要與 `.ogn` 檔的 version 一致。 |
 | `.ogn` | OmniGraph 節點型別的定義檔,宣告節點的名稱、版本與屬性。 |

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · 渲染與材質:「畫面是黑的」有四個成因 — Omniverse Kit 實戰筆記</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../../">Omniverse Kit 實戰筆記</a>
+  <nav class="tabs"><a href="../../">總覽</a><a href="../../common/" class="on">共通</a><a href="../../107/">Kit 107</a><a href="../../110/">Kit 110</a><a href="../../version-matrix.html">版本差異</a></nav>
+  <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
+</header>
+<div class="shell">
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li><li><a href="../../common/05-omnigraph/"><span class="n">05</span>OmniGraph</a></li><li><a href="../../common/06-run-modes/"><span class="n">06</span>執行模式:headless 不是「沒在算圖」</a></li><li><a href="../../common/07-rendering-and-materials/" class="on"><span class="n">07</span>渲染與材質:「畫面是黑的」有四個成因</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-hydra-讓算圖後端可以換">1. Hydra 讓算圖後端可以換</a></li><li class="l2"><a href="#2-貼圖讀不到結果是純黑">2. 貼圖讀不到,結果是純黑</a></li><li class="l2"><a href="#3-mdl-模組找不到結果是單一顏色">3. MDL 模組找不到,結果是單一顏色</a></li><li class="l2"><a href="#4-兩種與材質無關的黑">4. 兩種與材質無關的黑</a></li><li class="l2"><a href="#5-visibility-只影響算圖不改變碰撞">5. visibility 只影響算圖,不改變碰撞</a></li><li class="l2"><a href="#6-判別紀律不要看畫面">6. 判別紀律:不要看畫面</a></li><li class="l2"><a href="#7-待驗清單">7. 待驗清單</a></li></ul></aside>
+  <main class="doc">
+<h1 id="07-渲染與材質畫面是黑的有四個成因">07 · 渲染與材質:「畫面是黑的」有四個成因</h1>
+<p>算出來的畫面是黑的。沒有例外、沒有錯誤訊息,輸出的影片檔參數完全正常——解析度對、長度對、寫檔成功。</p>
+<p>這種情況下最沒有效率的動作是盯著那張黑畫面看,因為<strong>四個完全不同的成因在畫面上長得一模一樣</strong>。</p>
+<p align="center"><img src="../../img/black-frame-differential.svg" width="850" alt="畫面是黑的四個成因與各自的判別訊號"></p>
+
+<blockquote>
+<p><strong>驗證狀態</strong>:§2–§5 的機制與症狀來自姊妹 repo 在 Isaac Sim 5.1 場景上的實測,已標明。<strong>本 repo 沒有 Kit 環境,未實機複驗</strong>。§1 的架構敘述證據較弱,已在該節標明。§7 是待驗清單。</p>
+</blockquote>
+<h2 id="1-hydra-讓算圖後端可以換">1. Hydra 讓算圖後端可以換</h2>
+<p>Kit 的算圖走 USD 的 Hydra:場景資料交給 Hydra,Hydra 再交給一個 render delegate 去畫,RTX 是其中一個。這個分層讓「換算圖後端」不必動場景。</p>
+<p><strong>這一節的證據等級較弱</strong>——本 repo 取到的是文件摘要,沒有取到官方逐字定義。後面幾節的實測結論不依賴這一節的細節。</p>
+<p>實務上會用到的一點:算圖後端是可以換的,而<strong>同一個場景在不同後端下的表現可以不同</strong>。回報渲染問題時要標明用的是哪個 delegate。</p>
+<h2 id="2-貼圖讀不到結果是純黑">2. 貼圖讀不到,結果是純黑</h2>
+<p>這是最違反直覺的一條。</p>
+<p>貼圖檔不存在時,取樣節點回傳 <code>(0,0,0)</code>。而表面的顏色參數是<strong>連到</strong>那個取樣節點的,所以整個表面算出來是黑色。</p>
+<blockquote>
+<p><strong>缺貼圖不是素色,是純黑。</strong></p>
+</blockquote>
+<p>會覺得違反直覺,是因為「檔案不見了應該退回預設值」是多數系統的行為。這裡沒有退回預設,因為從資料流的角度看根本沒有「缺失」——取樣節點回了一個合法的顏色,只是那個顏色是零。</p>
+<p>判別方式:<strong>檢查貼圖檔的實際路徑存不存在</strong>,不要看畫面。這一條在資產搬家時特別容易踩——材質庫常常不在模型目錄底下,只搬模型目錄就會缺一整批。</p>
+<h2 id="3-mdl-模組找不到結果是單一顏色">3. MDL 模組找不到,結果是單一顏色</h2>
+<p>另一種材質缺失,症狀不同:整個材質沒有解析成功,模型變成單一顏色、貼圖全無。實測觀察到的多半是紅色。</p>
+<p><strong>兩種缺失,兩種顏色,代表不同的東西:</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>看到</th>
+<th>缺的是</th>
+<th>去哪裡查</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>純黑</td>
+<td>貼圖檔</td>
+<td>貼圖的實際路徑</td>
+</tr>
+<tr>
+<td>單一顏色(常見紅色)</td>
+<td>MDL 材質模組</td>
+<td>啟動 log</td>
+</tr>
+</tbody>
+</table></div>
+<p>MDL 那種在 log 裡有明確訊息,grep 找不到模組的字樣即可確認。<strong>用 log 判別,不要靠肉眼看畫面猜</strong>——因為下一節那兩種黑會混進來。</p>
+<h2 id="4-兩種與材質無關的黑">4. 兩種與材質無關的黑</h2>
+<p><strong>照度不足加上深色貼圖。</strong> 材質完全正常,只是在那個照度下算出來就是一塊黑。實測過的一個例子:一張金屬板貼圖的 diffuse 平均色量出來是 <code>(61, 50, 28)/255</code>,在該場域的照度下整面牆算成一塊黑,<strong>跟「材質壞掉」在畫面上分不出來</strong>。</p>
+<p>處理方式有兩個方向:把環境光調高,或把深色貼圖換成純色。實務上純色還有一個附帶好處——<strong>純色不會有「貼圖檔不在就變全黑」的風險</strong>(§2)。</p>
+<p><strong>有東西擋在鏡頭前。</strong> 畫面裡真的只有那個東西。多層樓的場景最容易踩:每層樓板不透明,任何外部視角看到的都是屋頂。</p>
+<h2 id="5-visibility-只影響算圖不改變碰撞">5. <code>visibility</code> 只影響算圖,不改變碰撞</h2>
+<p>要看到被樓板擋住的東西,直覺做法是把樓板設成不可見。這可以,但要知道它做了什麼、沒做什麼:</p>
+<blockquote>
+<p><strong><code>visibility</code> 只影響算圖,不改變碰撞。</strong></p>
+</blockquote>
+<p>樓板設為不可見之後,畫面上它消失了,而<strong>在上面跑的東西照樣在上面跑</strong>——碰撞形狀還在那裡。</p>
+<p>這是 USD 的語意:可見性是給算圖看的屬性,物理那一層讀的是別的東西。<strong>這條的實測是在 Isaac Sim 的物理環境上做的</strong>(車照樣在不可見的樓板上行走),但可見性本身的語意屬於 USD 這一層,任何 Kit 應用都適用。</p>
+<p>反過來也成立而且更容易誤判:<strong>把東西設成可見,不會讓它產生碰撞</strong>。</p>
+<h2 id="6-判別紀律不要看畫面">6. 判別紀律:不要看畫面</h2>
+<p>四個成因疊加起來的實測案例:錄出來 <strong>2833 幀全黑</strong>,而 mp4 的參數(1280×720、94 秒)完全正常,寫檔也沒有報錯。</p>
+<p>如果當時的判別方式是「看畫面」,那 2833 幀提供的資訊量等於零——它們全部長得一樣。有效的動作全部在畫面之外:</p>
+<ol>
+<li>貼圖路徑存不存在(§2)</li>
+<li>log 裡有沒有 MDL 模組缺失(§3)</li>
+<li>貼圖的平均色是多少、環境光調高之後有沒有變(§4)</li>
+<li>換一個視角算一張(§4)</li>
+</ol>
+<p>這與 <a href="../../common/02-extension-system/">02 §7</a>、<a href="../../common/05-omnigraph/">05 §5</a> 是同一條紀律的渲染版:<strong>輸出看起來正常,不代表它是對的。</strong> 這裡甚至更極端一點——輸出的每一項參數都正確,錯的只有內容。</p>
+<h2 id="7-待驗清單">7. 待驗清單</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>待驗的斷言</th>
+<th>怎麼驗</th>
+<th>什麼算通過</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>貼圖讀不到會算成純黑(§2)</td>
+<td>建一個帶貼圖的材質,把貼圖檔改名再算一張</td>
+<td>表面變純黑,而不是退回某個預設色</td>
+</tr>
+<tr>
+<td>2</td>
+<td>MDL 模組缺失是另一種顏色(§3)</td>
+<td>移走 MDL 材質庫再算一張,同時看 log</td>
+<td>顏色與第 1 條不同,且 log 有明確訊息</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>visibility</code> 不影響碰撞(§5)</td>
+<td>把一個承載物設為不可見,讓東西掉上去</td>
+<td>東西停在原本的表面上</td>
+</tr>
+<tr>
+<td>4</td>
+<td>可見不會產生碰撞(§5)</td>
+<td>一個沒有碰撞 API 的 prim 設為可見</td>
+<td>東西穿過去</td>
+</tr>
+<tr>
+<td>5</td>
+<td>不同 render delegate 的表現差異(§1)</td>
+<td>同一場景換後端各算一張</td>
+<td>記錄差異,或確認沒有差異</td>
+</tr>
+</tbody>
+</table></div>
+<p>第 1、2 兩條合起來是這一篇的骨幹:它們讓「黑」與「單色」變成可以區分的訊號。在驗到之前,遇到黑畫面仍然照 §6 的順序逐項排除,不要從畫面推成因。</p>
+  </main>
+</div>
+<footer class="foot">
+  <a href="../../">總覽</a> · <a href="../../version-matrix.html">版本差異速查</a> · <a href="https://github.com/wicanr2/omniverse-kit-study">原始碼</a>
+</footer>
+</body>
+</html>

@@ -4,7 +4,7 @@
 
 版本一改就不成立的,收到 [Kit 107](../107/) 或 [Kit 110](../110/)。
 
-這一區的 6 篇:
+這一區的 7 篇:
 
 | # | 篇名 | 講什麼 |
 |---|---|---|
@@ -14,3 +14,4 @@
 | 04 | [USD stage 與 Fabric:兩份真值](04-usd-stage-and-fabric/README.md) | 資料只從 USD 流向 Fabric,不會自動回頭;Fabric 上有沒有值是條件不是前提 |
 | 05 | [OmniGraph:圖是 USD 資料](05-omnigraph/README.md) | 節點型別與連線都是 USD 屬性,所以圖能離線寫全;求值掛在主迴圈上,不掛在物理上 |
 | 06 | [執行模式:headless 不是「沒在算圖」](06-run-modes/README.md) | 視窗與算圖是兩個獨立開關;`--exec`;串流三個 extension 的分工與兩個結構性限制 |
+| 07 | [渲染與材質:「畫面是黑的」有四個成因](07-rendering-and-materials/README.md) | 缺貼圖是純黑不是素色;MDL 缺失是另一種顏色;`visibility` 不改變碰撞 |

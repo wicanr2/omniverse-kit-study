@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 512" width="900" height="512"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="512" fill="#faf8f4"/>
+
+  <text x="45" y="30" font-size="15" fill="#3d3833" font-weight="600">「畫面是黑的」有四個成因,在畫面上長得一樣</text>
+  <text x="45" y="52" font-size="12.5" fill="#8a827a">四種都不報錯,輸出檔的參數也完全正常</text>
+
+  <line x1="45" y1="66" x2="855" y2="66" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="68" y="86" font-size="12" fill="#8a827a">成因</text>
+  <text x="520" y="86" font-size="12" fill="#8a827a">判別訊號:去哪裡看</text>
+
+  <!-- 1 -->
+  <rect x="45" y="98" width="5" height="72" fill="#3d3833"/>
+  <text x="68" y="120" font-size="14" fill="#3d3833" font-weight="600">貼圖檔讀不到</text>
+  <text x="68" y="142" font-size="12.5" fill="#57514b">取樣節點回 (0,0,0),而顏色是連到它的,</text>
+  <text x="68" y="161" font-size="12.5" fill="#57514b">於是整個表面算成純黑</text>
+  <text x="520" y="142" font-size="12.5" fill="#57514b">檢查貼圖檔的實際路徑存不存在</text>
+
+  <line x1="45" y1="184" x2="855" y2="184" stroke="#e8e3da" stroke-width="1"/>
+
+  <!-- 2 -->
+  <rect x="45" y="196" width="5" height="72" fill="#b5651d"/>
+  <text x="68" y="218" font-size="14" fill="#8a4a12" font-weight="600">MDL 材質模組找不到</text>
+  <text x="68" y="240" font-size="12.5" fill="#57514b">材質整個沒解析成功,退回單一顏色</text>
+  <text x="68" y="259" font-size="12.5" fill="#57514b">(觀察到的多半是紅色,不是黑色)</text>
+  <text x="520" y="240" font-size="12.5" fill="#8a4a12">啟動 log 裡 grep 找不到模組的訊息</text>
+
+  <line x1="45" y1="282" x2="855" y2="282" stroke="#e8e3da" stroke-width="1"/>
+
+  <!-- 3 -->
+  <rect x="45" y="294" width="5" height="72" fill="#8a827a"/>
+  <text x="68" y="316" font-size="14" fill="#3d3833" font-weight="600">照度不足,貼圖本身很暗</text>
+  <text x="68" y="338" font-size="12.5" fill="#57514b">材質完全正常,只是這個照度下算出來</text>
+  <text x="68" y="357" font-size="12.5" fill="#57514b">就是一塊黑</text>
+  <text x="520" y="338" font-size="12.5" fill="#57514b">量貼圖的平均色;把環境光調高再算一次</text>
+
+  <line x1="45" y1="380" x2="855" y2="380" stroke="#e8e3da" stroke-width="1"/>
+
+  <!-- 4 -->
+  <rect x="45" y="392" width="5" height="72" fill="#1f6f63"/>
+  <text x="68" y="414" font-size="14" fill="#1f6f63" font-weight="600">有東西擋在鏡頭前</text>
+  <text x="68" y="436" font-size="12.5" fill="#57514b">畫面裡真的只有那個東西,例如上一層樓板</text>
+  <text x="520" y="436" font-size="12.5" fill="#57514b">換一個視角算一張;把遮擋物設為不可見</text>
+
+  <line x1="45" y1="478" x2="855" y2="478" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="45" y="500" font-size="13" fill="#8a4a12">四個都要從畫面以外的地方判別。盯著黑畫面看,分不出自己踩到哪一個。</text>
+</svg>
