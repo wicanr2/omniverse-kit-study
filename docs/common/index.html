@@ -13,12 +13,12 @@
   <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
 </header>
 <div class="shell">
-  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li><li><a href="../common/05-omnigraph/"><span class="n">05</span>OmniGraph</a></li></ul></aside>
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li><li><a href="../common/05-omnigraph/"><span class="n">05</span>OmniGraph</a></li><li><a href="../common/06-run-modes/"><span class="n">06</span>執行模式:headless 不是「沒在算圖」</a></li></ul></aside>
   <main class="doc">
 <h1 id="共通機制與方法論">共通:機制與方法論</h1>
 <p>不綁 Kit 版本的內容。Kit 的多數核心概念跨版本是同一套——extension 相依樹怎麼解析、設定樹誰蓋過誰、stage 與 Fabric 為什麼是兩份真值——結論不隨版本改變的就收在這裡,不複製成兩份。</p>
 <p>版本一改就不成立的,收到 <a href="../107">Kit 107</a> 或 <a href="../110">Kit 110</a>。</p>
-<p>這一區的 5 篇:</p>
+<p>這一區的 6 篇:</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -52,6 +52,11 @@
 <td>05</td>
 <td><a href="../common/05-omnigraph/">OmniGraph:圖是 USD 資料</a></td>
 <td>節點型別與連線都是 USD 屬性,所以圖能離線寫全;求值掛在主迴圈上,不掛在物理上</td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="../common/06-run-modes/">執行模式:headless 不是「沒在算圖」</a></td>
+<td>視窗與算圖是兩個獨立開關;<code>--exec</code>;串流三個 extension 的分工與兩個結構性限制</td>
 </tr>
 </tbody>
 </table></div>

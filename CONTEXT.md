@@ -36,7 +36,10 @@
 | `node:type` | 節點 prim 上標明型別的 token,值的前綴是提供該型別的 extension 名。搭配 `node:typeVersion`,後者要與 `.ogn` 檔的 version 一致。 |
 | `.ogn` | OmniGraph 節點型別的定義檔,宣告節點的名稱、版本與屬性。 |
 | omni.ui | Kit 的 UI 框架。headless 模式下有一部分東西根本不存在。 |
-| headless | 不開 GUI 視窗的執行模式,適合遠端伺服器與自動化。 |
+| headless | **沒有本機視窗**的執行模式,不等於「沒在算圖」。串流跑得起來就代表 GPU 還在畫。 |
+| `--no-window` | 隱藏編輯器介面的旗標,而 WebRTC 串流照跑。切掉的是視窗這條輸出路徑,不是算圖本身。 |
+| `--exec` | 啟動時執行腳本的命令列參數,可給參數、可給多個。沒有 UI 時驅動 Kit 的主要方式。 |
+| livestream | Kit 的串流機制,分成 framebuffer 串流、pixel stream、以及把瀏覽器送來的資料接進 event bus 三個 extension。 |
 | kit-app-template | NVIDIA 官方的應用腳手架倉庫,用來生成 `.kit` 應用與 extension 的骨架。 |
 | 證據等級 | 本 repo 對每條斷言的標記:官方逐字 / 官方摘要未核對 / 實測 / 推測待驗。標錯比寫得不夠詳細嚴重。 |
 | 正對照 | 列舉查詢時拿一個**確定存在**的東西當試紙,用來區分「東西不在」與「我的查法有洞」。 |

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 · 執行模式:headless 不是「沒在算圖」 — Omniverse Kit 實戰筆記</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../../">Omniverse Kit 實戰筆記</a>
+  <nav class="tabs"><a href="../../">總覽</a><a href="../../common/" class="on">共通</a><a href="../../107/">Kit 107</a><a href="../../110/">Kit 110</a><a href="../../version-matrix.html">版本差異</a></nav>
+  <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
+</header>
+<div class="shell">
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li><li><a href="../../common/05-omnigraph/"><span class="n">05</span>OmniGraph</a></li><li><a href="../../common/06-run-modes/" class="on"><span class="n">06</span>執行模式:headless 不是「沒在算圖」</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-根本問題畫面要給誰看">1. 根本問題:畫面要給誰看</a></li><li class="l2"><a href="#2-兩個獨立的開關">2. 兩個獨立的開關</a></li><li class="l2"><a href="#3---exec啟動後跑自己的腳本">3. --exec:啟動後跑自己的腳本</a></li><li class="l2"><a href="#4-串流三個-extension-的分工">4. 串流:三個 extension 的分工</a></li><li class="l2"><a href="#5-串流的兩個結構性限制">5. 串流的兩個結構性限制</a></li><li class="l2"><a href="#6-headless-下要重新驗的東西">6. headless 下要重新驗的東西</a></li><li class="l2"><a href="#7-待驗清單">7. 待驗清單</a></li></ul></aside>
+  <main class="doc">
+<h1 id="06-執行模式headless-不是沒在算圖">06 · 執行模式:headless 不是「沒在算圖」</h1>
+<p>把 Kit 應用搬上遠端伺服器時,第一個要做的決定是「畫面怎麼辦」。而這個決定常常被簡化成一個二選一——有 GUI 或 headless——於是產生一個代價不小的誤會:<strong>以為 headless 就是不吃 GPU</strong>。</p>
+<p>實際上那是兩個獨立的開關。</p>
+<p align="center"><img src="../../img/render-output-paths.svg" width="850" alt="算圖之後分成本機視窗與 WebRTC 兩條輸出路徑,--no-window 只切掉前者"></p>
+
+<blockquote>
+<p><strong>驗證狀態</strong>:§2–§4 引用官方文件逐字。<strong>本 repo 沒有 Kit 環境,未實機驗證</strong>;§5 的限制與數字來自姊妹 repo 在 Isaac Sim 5.1 上的實測,已標明。§7 是待驗清單。</p>
+</blockquote>
+<h2 id="1-根本問題畫面要給誰看">1. 根本問題:畫面要給誰看</h2>
+<p>一個 3D 應用算完一幀之後,那張圖有三種去處:畫到本機視窗、編碼後送去別的機器、或是誰也不給(只是為了讓下游元件有東西可讀)。</p>
+<p>這三種需求對應的不是三種「模式」,而是<strong>輸出路徑要不要接上</strong>。把它想成模式,就會問出「headless 模式下 GPU 是不是就閒著」這種答不對的問題。</p>
+<h2 id="2-兩個獨立的開關">2. 兩個獨立的開關</h2>
+<p>官方對 <code>--no-window</code> 的描述只有一句,但這句把事情講死了:</p>
+<blockquote>
+<p>"The <code>--no-window</code> flag keeps the editor UI hidden while still running the WebRTC stream."</p>
+</blockquote>
+<p><strong>隱藏編輯器介面,而串流照跑。</strong> 串流要送出畫面,畫面要先算出來——所以算圖那一段完全沒有停。</p>
+<p>由此得到的判斷:</p>
+<ul>
+<li><code>--no-window</code> 管的是<strong>本機視窗</strong>這條輸出路徑。</li>
+<li>算圖本身是另一件事,關掉視窗不會關掉它。</li>
+<li>遠端伺服器上跑 <code>--no-window</code> 而 GPU 使用率很高,是正常的,不是設定錯了。</li>
+</ul>
+<p>真的想省下算圖,要動的是算圖那一段本身(例如不啟用算圖相關的 extension、或不建立 viewport),不是視窗旗標。</p>
+<p>容器化的情境官方也是這樣描述的:"The container will start the headless Kit process and the WebRTC streaming server."——headless 的 Kit 程序<strong>與</strong>串流伺服器,兩個一起起來。</p>
+<h2 id="3---exec啟動後跑自己的腳本">3. <code>--exec</code>:啟動後跑自己的腳本</h2>
+<p>沒有 UI 的時候要怎麼叫應用做事?用 <code>--exec</code> 在啟動時帶腳本進去:</p>
+<pre><code>kit.exe --exec &quot;some_script.py arg1 arg2&quot;  --exec &quot;open_stage&quot;
+</code></pre>
+<p>可以給參數,也可以給多個 <code>--exec</code>。官方另外註明:"The script extension (.py) can be omitted"。</p>
+<p><strong>本 repo 沒有查到官方對執行順序、失敗處理、以及與 <code>--enable</code> 之間先後關係的明確說明</strong>——多個 <code>--exec</code> 是循序還是其他行為,文件沒有明講。要依賴那個順序之前,自己驗一次(§7)。</p>
+<p>這一條加上 <a href="../../common/02-extension-system/">02</a> 的 <code>--enable</code> 與 <a href="../../common/03-carb-settings/">03</a> 的 <code>--/...</code>,構成了「不碰 UI 操作 Kit」的三件工具:決定載什麼、設定成什麼樣、然後跑什麼。</p>
+<h2 id="4-串流三個-extension-的分工">4. 串流:三個 extension 的分工</h2>
+<p>WebRTC 串流不是單一功能,官方文件列出三個 extension,各管一段:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>extension</th>
+<th>官方描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>omni.kit.livestream.app</code></td>
+<td>"enables streaming of the entire application framebuffer in Omniverse Kit applications"</td>
+</tr>
+<tr>
+<td><code>omni.kit.livestream.webrtc</code></td>
+<td>"handles the pixel stream"</td>
+</tr>
+<tr>
+<td><code>omni.kit.livestream.messaging</code></td>
+<td>"carries browser-sent data to an event bus for application extensions to act on"</td>
+</tr>
+</tbody>
+</table></div>
+<p>分工的意義:畫面出去是一條路(前兩個),<strong>使用者的操作回來是另一條路</strong>(第三個)。瀏覽器送來的資料進到 event bus,再由應用的 extension 去接。</p>
+<p>排查時這個分界很有用:看得到畫面但點不動,問題在第三個那一段,不在前兩個。</p>
+<h2 id="5-串流的兩個結構性限制">5. 串流的兩個結構性限制</h2>
+<p>以下來自姊妹 repo 在 Isaac Sim 5.1 上的實測。<strong>Isaac Sim 用的是 Kit 的 livestream 機制,所以限制屬於這一層</strong>;但數字與行為是在那個版本、那個組態上量到的,換版本要自己複驗。</p>
+<p><strong>一、同時只服務一個 video client。</strong> 訊令端一次只把 video track 交給一個 peer,第二個連上的 client 只拿得到 audio。而且控制事件走 WebRTC data channel,綁在那個唯一的 peer 上——所以「多人同時看」不是調參數就能解決的,要在外面架媒體伺服器分流。</p>
+<p><strong>二、解析度協商失敗的樣子不像失敗。</strong> 應用端算的解析度若高於 client 宣告的上限,Kit 端會<strong>拒絕送出超過上限的影格</strong>。實際觀察到的現象是:只送出第一張 keyframe 就停住,媒體伺服器等不到連續的 track 而斷線重連。</p>
+<p>這個症狀看起來像網路不穩或玄學故障,而根因是兩邊的數字對不上。處理方式是把應用端的輸出降到 client 收得下的尺寸:</p>
+<pre><code>--/app/livestream/width=1280 --/app/livestream/height=720
+</code></pre>
+<p><strong>不同 client 與不同版本的上限不一樣,以實際協商結果為準</strong>,不要照抄這組數字。</p>
+<p>這條的形狀值得記住:<strong>在 Kit 這一層,「參數不相容」經常表現成「東西不動」而不是「報錯」</strong>——與 <a href="../../common/02-extension-system/">02 §7</a>、<a href="../../common/05-omnigraph/">05 §4</a> 同一個家族。</p>
+<h2 id="6-headless-下要重新驗的東西">6. headless 下要重新驗的東西</h2>
+<p>換到 headless 之後,有些在 GUI 下成立的事情不再成立,而且多半不會報錯。</p>
+<p>已知的一個:<a href="../../common/05-omnigraph/">05 §4</a> 記的 OmniGraph 在某些 headless 組態下不 tick。那份紀錄的觸發條件來自應用層,但它示範了要檢查的形狀。</p>
+<p>搬上 headless 之後值得逐項確認的:</p>
+<ul>
+<li>圖有沒有在被求值(數節點被算幾次,不看物理時間)</li>
+<li>需要 viewport 才存在的東西還在不在(相機、算圖相關的查詢)</li>
+<li>UI 相關的 extension 是否仍被拉進來——<code>--no-window</code> 只是不顯示,不等於沒載入</li>
+</ul>
+<p>最後一項有實際成本:沒有人看的介面照樣佔記憶體與啟動時間。要真的不載,得從 <code>.kit</code> 檔的相依裡拿掉(<a href="../../common/01-kit-is-the-framework/">01 §2</a>),而不是靠旗標。<strong>這一條是推論,本 repo 未實測</strong>,驗法在 §7。</p>
+<h2 id="7-待驗清單">7. 待驗清單</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>待驗的斷言</th>
+<th>怎麼驗</th>
+<th>什麼算通過</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>--no-window</code> 不會停掉算圖(§2)</td>
+<td>同一個應用開關該旗標各跑一次,量 GPU 使用率與幀率</td>
+<td>兩者接近</td>
+</tr>
+<tr>
+<td>2</td>
+<td>多個 <code>--exec</code> 的執行順序(§3)</td>
+<td>給兩個各自印出時間戳的腳本</td>
+<td>印出的順序與命令列順序一致</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>--exec</code> 與 <code>--enable</code> 的先後(§3)</td>
+<td>腳本裡查一個由 <code>--enable</code> 帶入的 extension 是否已啟用</td>
+<td>查得到則 enable 先於 exec</td>
+</tr>
+<tr>
+<td>4</td>
+<td>串流只服務一個 video client(§5)</td>
+<td>兩個 client 同時連上</td>
+<td>第二個沒有 video track</td>
+</tr>
+<tr>
+<td>5</td>
+<td>解析度超過 client 上限會停在第一張(§5)</td>
+<td>刻意把 <code>livestream/width</code>/<code>height</code> 設高於 client</td>
+<td>收到一張後斷流</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>--no-window</code> 下 UI extension 仍被載入(§6)</td>
+<td>查 UI 相關 extension 的啟用狀態與記憶體</td>
+<td>仍在啟用清單裡</td>
+</tr>
+</tbody>
+</table></div>
+<p>第 1 條最值得先做:它決定了「headless 能不能省下 GPU 預算」這個規劃層級的問題,而目前的依據只有官方那一句話的推論。</p>
+  </main>
+</div>
+<footer class="foot">
+  <a href="../../">總覽</a> · <a href="../../version-matrix.html">版本差異速查</a> · <a href="https://github.com/wicanr2/omniverse-kit-study">原始碼</a>
+</footer>
+</body>
+</html>

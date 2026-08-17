@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" height="440"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="440" fill="#faf8f4"/>
+
+  <text x="45" y="30" font-size="14" fill="#8a827a">「有沒有視窗」與「有沒有在算圖」是兩個獨立的開關</text>
+
+  <!-- 主線 -->
+  <rect x="45" y="150" width="140" height="60" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="63" y="178" font-size="14" fill="#3d3833">USD stage</text>
+  <text x="63" y="197" font-size="12" fill="#8a827a">場景資料</text>
+
+  <path d="M185 180 L233 180" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M237 180 l-9 -5 v10 z" fill="#8a827a"/>
+
+  <rect x="237" y="150" width="150" height="60" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.5"/>
+  <text x="255" y="178" font-size="14" fill="#1f6f63">Hydra + RTX</text>
+  <text x="255" y="197" font-size="12" fill="#8a827a">算圖,吃 GPU</text>
+
+  <path d="M387 180 L435 180" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M439 180 l-9 -5 v10 z" fill="#8a827a"/>
+
+  <rect x="439" y="150" width="130" height="60" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="457" y="185" font-size="14" fill="#3d3833">framebuffer</text>
+
+  <!-- 分岔:上路 視窗 -->
+  <path d="M569 168 L610 168 L610 96 L648 96" fill="none" stroke="#b5651d" stroke-width="1.4"/>
+  <path d="M652 96 l-9 -5 v10 z" fill="#b5651d"/>
+  <line x1="622" y1="88" x2="638" y2="104" stroke="#b5651d" stroke-width="2.2"/>
+  <line x1="638" y1="88" x2="622" y2="104" stroke="#b5651d" stroke-width="2.2"/>
+
+  <rect x="652" y="66" width="203" height="60" rx="6" fill="#fdf3e9" stroke="#b5651d" stroke-width="1.4"/>
+  <text x="670" y="92" font-size="14" fill="#8a4a12">本機視窗</text>
+  <text x="670" y="112" font-size="12.5" fill="#8a4a12" font-family="ui-monospace,'DejaVu Sans Mono',monospace">--no-window</text>
+  <text x="782" y="112" font-size="12" fill="#8a4a12">切掉這條</text>
+
+  <!-- 分岔:下路 串流 -->
+  <path d="M569 192 L610 192 L610 274 L648 274" fill="none" stroke="#1f6f63" stroke-width="1.5"/>
+  <path d="M652 274 l-9 -5 v10 z" fill="#1f6f63"/>
+
+  <rect x="652" y="244" width="203" height="60" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.5"/>
+  <text x="670" y="270" font-size="14" fill="#1f6f63">WebRTC 編碼送出</text>
+  <text x="670" y="290" font-size="12" fill="#8a827a">瀏覽器或 client 收</text>
+
+  <!-- 註記 -->
+  <text x="237" y="240" font-size="12.5" fill="#8a4a12">這一段不會因為關掉視窗而停</text>
+
+  <!-- 底部 -->
+  <line x1="45" y1="344" x2="855" y2="344" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="45" y="372" font-size="14" fill="#3d3833">headless 指的是<tspan font-weight="600">沒有本機視窗</tspan>,不是「沒有在算圖」。串流跑得起來,就代表 GPU 還在畫。</text>
+  <text x="45" y="400" font-size="13" fill="#8a827a">真的要省下算圖,得關掉的是算圖那一段本身,不是視窗。</text>
+</svg>
