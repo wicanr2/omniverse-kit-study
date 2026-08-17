@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" height="440"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="440" fill="#faf8f4"/>
+
+  <text x="45" y="32" font-size="15" fill="#3d3833" font-weight="600">圖的求值掛在主迴圈上,不掛在物理上</text>
+  <text x="45" y="54" font-size="12.5" fill="#8a827a">所以「物理時間有前進」不能拿來證明「圖在跑」</text>
+
+  <!-- 左:主迴圈在轉 -->
+  <rect x="45" y="74" width="380" height="216" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.5"/>
+  <text x="66" y="102" font-size="15" fill="#1f6f63" font-weight="600">主迴圈在轉</text>
+  <line x1="66" y1="114" x2="404" y2="114" stroke="#cfc8bd" stroke-width="1"/>
+
+  <text x="66" y="142" font-size="13.5" fill="#57514b">物理時間前進</text>
+  <text x="330" y="142" font-size="14" fill="#1f6f63">有</text>
+
+  <text x="66" y="174" font-size="13.5" fill="#57514b">OmniGraph 被求值</text>
+  <text x="330" y="174" font-size="14" fill="#1f6f63">有</text>
+
+  <line x1="66" y1="194" x2="404" y2="194" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="66" y="222" font-size="13.5" fill="#3d3833">節點被算的次數</text>
+  <text x="300" y="222" font-size="20" fill="#1f6f63" font-family="ui-monospace,'DejaVu Sans Mono',monospace">301</text>
+  <text x="66" y="252" font-size="12" fill="#8a827a">圖真的在跑,下游收得到東西</text>
+
+  <!-- 右:只推物理 -->
+  <rect x="475" y="74" width="380" height="216" rx="6" fill="#fdf3e9" stroke="#b5651d" stroke-width="1.5"/>
+  <text x="496" y="102" font-size="15" fill="#8a4a12" font-weight="600">只推物理,主迴圈沒轉</text>
+  <line x1="496" y1="114" x2="834" y2="114" stroke="#e0c3a3" stroke-width="1"/>
+
+  <text x="496" y="142" font-size="13.5" fill="#57514b">物理時間前進</text>
+  <text x="760" y="142" font-size="14" fill="#1f6f63">有</text>
+
+  <text x="496" y="174" font-size="13.5" fill="#57514b">OmniGraph 被求值</text>
+  <text x="760" y="174" font-size="14" fill="#8a4a12">沒有</text>
+
+  <line x1="496" y1="194" x2="834" y2="194" stroke="#e0c3a3" stroke-width="1"/>
+  <text x="496" y="222" font-size="13.5" fill="#3d3833">節點被算的次數</text>
+  <text x="730" y="222" font-size="20" fill="#8a4a12" font-family="ui-monospace,'DejaVu Sans Mono',monospace">1</text>
+  <text x="496" y="252" font-size="12" fill="#8a4a12">沒有錯誤訊息,物理那一項照樣是綠的</text>
+
+  <!-- 底部 -->
+  <line x1="45" y1="322" x2="855" y2="322" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="45" y="350" font-size="14" fill="#3d3833">兩個訊號指向不同的東西。驗收要數<tspan font-weight="600">節點被算幾次</tspan>,不要看物理時間有沒有前進。</text>
+  <text x="45" y="382" font-size="12.5" fill="#8a827a">數字取自 Isaac Sim 5.1.2 的實測。觸發條件是該應用層的推進 API;</text>
+  <text x="45" y="402" font-size="12.5" fill="#8a827a">底層的分工——圖跟主迴圈、物理跟步進——是 Kit 這一層的機制。</text>
+</svg>

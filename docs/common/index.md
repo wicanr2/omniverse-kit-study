@@ -4,7 +4,7 @@
 
 版本一改就不成立的,收到 [Kit 107](../107/) 或 [Kit 110](../110/)。
 
-這一區的 4 篇:
+這一區的 5 篇:
 
 | # | 篇名 | 講什麼 |
 |---|---|---|
@@ -12,3 +12,4 @@
 | 02 | [extension 系統:相依解析、來源優先序、生命週期](02-extension-system/README.md) | 相容的判準是最左邊那個非零位;開發路徑會忽略版本檢查;啟用回傳成功不是它活著 |
 | 03 | [carb settings:設定樹、先寫先贏](03-carb-settings/README.md) | `[settings]` 在任何 extension 啟動前套用完,順序反向、先寫先贏;完整優先序官方沒寫全,怎麼自己量 |
 | 04 | [USD stage 與 Fabric:兩份真值](04-usd-stage-and-fabric/README.md) | 資料只從 USD 流向 Fabric,不會自動回頭;Fabric 上有沒有值是條件不是前提 |
+| 05 | [OmniGraph:圖是 USD 資料](05-omnigraph/README.md) | 節點型別與連線都是 USD 屬性,所以圖能離線寫全;求值掛在主迴圈上,不掛在物理上 |

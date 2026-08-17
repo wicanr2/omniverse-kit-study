@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 · OmniGraph:圖是 USD 資料,而求值不在物理迴圈上 — Omniverse Kit 實戰筆記</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../../">Omniverse Kit 實戰筆記</a>
+  <nav class="tabs"><a href="../../">總覽</a><a href="../../common/" class="on">共通</a><a href="../../107/">Kit 107</a><a href="../../110/">Kit 110</a><a href="../../version-matrix.html">版本差異</a></nav>
+  <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
+</header>
+<div class="shell">
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li><li><a href="../../common/05-omnigraph/" class="on"><span class="n">05</span>OmniGraph</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-根本問題這張圖要存在哪">1. 根本問題:這張圖要存在哪</a></li><li class="l2"><a href="#2-節點型別與連線都是-usd-屬性">2. 節點型別與連線都是 USD 屬性</a></li><li class="l2"><a href="#3-結構在-usd值在-fabric">3. 結構在 USD,值在 Fabric</a></li><li class="l2"><a href="#4-圖跟著誰求值">4. 圖跟著誰求值</a></li><li class="l2"><a href="#5-生效證明兩個查詢">5. 生效證明:兩個查詢</a></li><li class="l2"><a href="#6-待驗清單">6. 待驗清單</a></li></ul></aside>
+  <main class="doc">
+<h1 id="05-omnigraph圖是-usd-資料而求值不在物理迴圈上">05 · OmniGraph:圖是 USD 資料,而求值不在物理迴圈上</h1>
+<p>OmniGraph 是 Kit 的視覺化節點圖:拉節點、連線,不寫程式碼也能讓場景動起來。</p>
+<p>這一層有兩件事值得先知道,而且兩件都不是從介面上看得出來的。第一,那張圖本身就是 USD 資料——節點型別是一個屬性,連線是 USD 的 attribute connection,所以圖可以完全離線寫出來。第二,<strong>圖什麼時候被算,跟物理什麼時候前進,是兩回事</strong>。</p>
+<p align="center"><img src="../../img/omnigraph-not-on-physics-loop.svg" width="850" alt="主迴圈在轉與只推物理兩種情況下,節點被算的次數對照"></p>
+
+<blockquote>
+<p><strong>驗證狀態</strong>:§2、§3 引用官方 OmniGraph 文件逐字。<strong>本 repo 沒有 Kit 環境,未實機驗證</strong>;§4、§5 的數字與 log 來自姊妹 repo 在 Isaac Sim 5.1.2 上的實測,已標明來源與觸發條件。§6 是待驗清單。</p>
+</blockquote>
+<h2 id="1-根本問題這張圖要存在哪">1. 根本問題:這張圖要存在哪</h2>
+<p>視覺化腳本工具的老問題是「圖存哪」。存成自訂格式就要自己寫序列化、版本遷移、diff 工具,而且它跟場景是兩個檔案,搬家時容易走散。</p>
+<p>OmniGraph 的做法是不另外發明格式:<strong>圖就存在 USD 場景裡</strong>,用 USD 既有的機制表達。節點是 prim,節點型別是 prim 上的一個屬性,連線是 USD 本來就有的 attribute connection。</p>
+<p>代價是 USD 的表達方式不像專用格式那麼直覺;好處相當大——版本控制、引用、layer 疊加、非破壞性編輯,全部免費繼承。</p>
+<h2 id="2-節點型別與連線都是-usd-屬性">2. 節點型別與連線都是 USD 屬性</h2>
+<p>一個節點在 USD 裡帶兩個 token:</p>
+<pre><code>token node:type = &quot;omni.graph.nodes.Times2&quot;
+int node:typeVersion = 1
+</code></pre>
+<p>官方對這兩個值的說明:</p>
+<blockquote>
+<p>"The value of <code>node:typeVersion</code> must match the 'version' value specified in the .ogn file"</p>
+<p>"The value of <code>node:type</code> is an extended version of the name key specified in the .ogn file, with the extension prepended."</p>
+</blockquote>
+<p>型別名前面掛的是提供它的 extension 名。所以節點型別存不存在,取決於對應的 extension 有沒有真的活著——這把 <a href="../../common/02-extension-system/">02 §7</a> 那條直接接了起來:extension 啟用回傳成功而它隨即收掉的話,這裡就會變成「節點型別不存在」。</p>
+<p>連線用 USD 原生的寫法:</p>
+<pre><code>custom double inputs:a.connect = &lt;/Graph/times_2_node_1.outputs:two_a&gt;
+</code></pre>
+<p>官方明說這不是比喻:</p>
+<blockquote>
+<p>"OmniGraph connections between attributes are implemented and handled directly within OmniGraph they are published within USD as <em>UsdAttribute</em> connections."</p>
+</blockquote>
+<p><strong>推得的一件事</strong>:既然節點型別與連線都只是 USD 屬性,那麼整張圖可以用純 USD API 離線寫出來,不需要開 OmniGraph 的介面、也不需要在 Kit 執行期組裝。這對「場景由程式生成」「圖要進版控 diff」這類需求很有用。<strong>這是從上述機制推的,本 repo 未實測</strong>;驗法在 §6。</p>
+<h2 id="3-結構在-usd值在-fabric">3. 結構在 USD,值在 Fabric</h2>
+<p>這裡有個容易混淆的分工,官方講得很直接:</p>
+<blockquote>
+<p>"Although the attributes are represented in USD, the actual values OmniGraph nodes use are stored in Fabric. These are the values that need to be synchronized by OmniGraph."</p>
+</blockquote>
+<p><strong>屬性的宣告在 USD,節點實際使用的值在 Fabric,而同步是 OmniGraph 的責任。</strong></p>
+<p>接著 <a href="../../common/04-usd-stage-and-fabric/">04</a> 讀:那一篇說「寫進 Fabric 的值不會自動推回 USD stage」,這裡說 OmniGraph 需要同步那些值。兩者不衝突,差別在「自動」二字——Fabric 本身不會回寫,是 OmniGraph 這個系統主動去做同步。</p>
+<p>官方架構文件描述的典型資料流是 USD 填充節點資料到 Fabric、Fabric 供計算、OmniGraph 把結果寫回 Fabric、Fabric 再把算完的資料同步回 USD。<strong>最後那一段(Fabric → USD)本 repo 只取到摘要,沒有取到逐字原文,列為待查證</strong>;前面幾段與 §2 引的那句逐字一致。</p>
+<p>實務上的意思:在 USD 上讀一個 OmniGraph 節點的屬性值,讀到的不一定是它這一幀實際用的值。要確定的話,查 Fabric 那一份(<a href="../../common/04-usd-stage-and-fabric/">04 §5</a>)。</p>
+<h2 id="4-圖跟著誰求值">4. 圖跟著誰求值</h2>
+<p>這是本篇最貴的一條。</p>
+<p><strong>圖的求值掛在應用主迴圈上,物理前進掛在物理步進上,兩者不是同一個東西。</strong> 只推進物理而主迴圈沒有轉的時候,物理時間照樣前進,而圖完全不被求值——沒有錯誤訊息,物理那一項的檢查照樣通過。</p>
+<p>姊妹 repo 在 Isaac Sim 5.1.2 上的實測,用該應用層 API 只推物理(<code>render=False</code>)與正常跑各一輪:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>只推物理</th>
+<th>正常跑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OnTick</code> 被算的次數</td>
+<td><strong>1</strong></td>
+<td>301</td>
+</tr>
+</tbody>
+</table></div>
+<p>同一份紀錄裡還有一個不同觸發條件、同樣形狀的案例:headless 模式下 OmniGraph 不 tick。</p>
+<p><strong>這兩個觸發條件都來自應用層(Isaac Sim 的推進 API、該應用的 headless 組態),但底層的分工是 Kit 的。</strong> 換一個 Kit 應用,只要它也有「推進物理但不轉主迴圈」的路徑,同樣的事情就會發生。寫自己的 <code>.kit</code> 應用時,這條要自己驗一次(§6)。</p>
+<p>由此得到一條驗收紀律:</p>
+<blockquote>
+<p><strong>不要拿「物理時間有前進」當成「模擬在跑」。</strong> 兩個訊號指向不同的東西。</p>
+</blockquote>
+<h2 id="5-生效證明兩個查詢">5. 生效證明:兩個查詢</h2>
+<p>要證明圖真的在運作,查兩件事,而兩件都不能看回傳值。</p>
+<p><strong>一、節點型別註冊了沒。</strong> 這決定圖能不能被建起來。</p>
+<pre><code class="language-python">registered = set(og.get_registered_nodes())          # 回的是字串
+alive = &quot;omni.graph.action.OnPlaybackTick&quot; in registered
+</code></pre>
+<p>⚠ <strong>這是列舉查詢,一定要配正對照。</strong> <code>og.get_registered_nodes()</code> 回的是字串;若誤照物件屬性寫成 <code>{n.get_node_type_name() for n in ...}</code> 會拋 <code>AttributeError</code>,集合停在空的,於是每個型別都印「沒有」——<strong>包括一定存在的那個</strong>。拿一個確定存在的型別當試紙,它若也回「沒有」,壞的是查法。</p>
+<p><strong>二、節點被算了幾次。</strong> 這決定圖有沒有在跑。數某個 tick 節點的計算次數,跨若干幀比對它有沒有增加。§4 那張表就是這個做法的產物:數字是 1 或 301,結論完全不同,而兩種情況都沒有錯誤訊息。</p>
+<p>這與 <a href="../../common/02-extension-system/">02 §7</a>、<a href="../../common/03-carb-settings/">03 §7</a>、<a href="../../common/04-usd-stage-and-fabric/">04 §5</a> 是同一件事的第四種穿法:<strong>Kit 這一層的東西壞掉時,多半不是拋例外,是安靜地回一個合法的值。</strong> 每一層的驗收都要找到一個「能力在不在」的訊號,不能只看呼叫有沒有成功。</p>
+<h2 id="6-待驗清單">6. 待驗清單</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>待驗的斷言</th>
+<th>怎麼驗</th>
+<th>什麼算通過</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>圖可以用純 USD API 離線寫全(§2)</td>
+<td>不開 Kit,用 <code>pxr</code> 寫一個帶 <code>node:type</code>、<code>node:typeVersion</code> 與 <code>.connect</code> 的 USD 檔,再用 Kit 開起來</td>
+<td>圖出現在編輯器裡且能被求值</td>
+</tr>
+<tr>
+<td>2</td>
+<td>節點型別名前綴就是提供它的 extension(§2)</td>
+<td>停用某個提供節點的 extension,再查 <code>og.get_registered_nodes()</code></td>
+<td>該前綴的型別全部消失,其餘不受影響</td>
+</tr>
+<tr>
+<td>3</td>
+<td>純 Kit 應用上也有「物理前進而圖不 tick」的路徑(§4)</td>
+<td>在自製 <code>.kit</code> 應用上找出只推進物理的呼叫,數節點計算次數</td>
+<td>物理時間增加而計算次數不變</td>
+</tr>
+<tr>
+<td>4</td>
+<td>headless 下圖是否 tick(§4)</td>
+<td>同一份圖,GUI 與 headless 各跑一次,數計算次數</td>
+<td>兩者次數接近則 headless 不是條件</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Fabric 算完的值會同步回 USD(§3,待查證)</td>
+<td>讓圖算出一個輸出值,分別從 <code>usdrt</code> 與 <code>pxr</code> 讀該屬性</td>
+<td>兩邊一致則同步存在;不一致則需明確呼叫</td>
+</tr>
+<tr>
+<td>6</td>
+<td>USD 上讀到的節點屬性值不等於這一幀用的值(§3)</td>
+<td>圖運作中,同一個輸入屬性兩條路徑各讀一次</td>
+<td>兩值不同</td>
+</tr>
+</tbody>
+</table></div>
+<p>第 3 條最值得優先:它決定了 §4 那條紀律在純 Kit 環境下是不是同樣成立,而目前的證據全部來自 Isaac Sim。</p>
+  </main>
+</div>
+<footer class="foot">
+  <a href="../../">總覽</a> · <a href="../../version-matrix.html">版本差異速查</a> · <a href="https://github.com/wicanr2/omniverse-kit-study">原始碼</a>
+</footer>
+</body>
+</html>

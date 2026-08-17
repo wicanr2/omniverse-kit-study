@@ -32,7 +32,9 @@
 | Hydra | USD 的算圖抽象層,把場景資料交給後端算圖器。 |
 | RTX | NVIDIA 的即時光線追蹤算圖後端,Kit 預設的 Hydra 算圖器之一。 |
 | MDL(.mdl) | NVIDIA Material Definition Language,Omniverse 的材質格式。 |
-| OmniGraph | Kit 的視覺化節點圖框架。節點型別與連線都是真的 USD 屬性,所以圖可以離線寫全。 |
+| OmniGraph | Kit 的視覺化節點圖框架。節點是 prim、型別是 `node:type` 屬性、連線是 USD 的 attribute connection,所以整張圖存在 USD 場景裡。屬性宣告在 USD,節點實際使用的值在 Fabric。 |
+| `node:type` | 節點 prim 上標明型別的 token,值的前綴是提供該型別的 extension 名。搭配 `node:typeVersion`,後者要與 `.ogn` 檔的 version 一致。 |
+| `.ogn` | OmniGraph 節點型別的定義檔,宣告節點的名稱、版本與屬性。 |
 | omni.ui | Kit 的 UI 框架。headless 模式下有一部分東西根本不存在。 |
 | headless | 不開 GUI 視窗的執行模式,適合遠端伺服器與自動化。 |
 | kit-app-template | NVIDIA 官方的應用腳手架倉庫,用來生成 `.kit` 應用與 extension 的骨架。 |
