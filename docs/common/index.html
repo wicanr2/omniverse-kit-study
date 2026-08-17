@@ -13,12 +13,12 @@
   <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
 </header>
 <div class="shell">
-  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li><li><a href="../common/05-omnigraph/"><span class="n">05</span>OmniGraph</a></li><li><a href="../common/06-run-modes/"><span class="n">06</span>執行模式:headless 不是「沒在算圖」</a></li><li><a href="../common/07-rendering-and-materials/"><span class="n">07</span>渲染與材質:「畫面是黑的」有四個成因</a></li><li><a href="../common/08-debugging/"><span class="n">08</span>除錯:這一層的東西壞掉時不會拋例外</a></li></ul></aside>
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li><li><a href="../common/05-omnigraph/"><span class="n">05</span>OmniGraph</a></li><li><a href="../common/06-run-modes/"><span class="n">06</span>執行模式:headless 不是「沒在算圖」</a></li><li><a href="../common/07-rendering-and-materials/"><span class="n">07</span>渲染與材質:「畫面是黑的」有四個成因</a></li><li><a href="../common/08-debugging/"><span class="n">08</span>除錯:這一層的東西壞掉時不會拋例外</a></li><li><a href="../common/09-omni-ui/"><span class="n">09</span>omni.ui</a></li><li><a href="../common/10-packaging-and-release/"><span class="n">10</span>打包與發佈</a></li></ul></aside>
   <main class="doc">
 <h1 id="共通機制與方法論">共通:機制與方法論</h1>
 <p>不綁 Kit 版本的內容。Kit 的多數核心概念跨版本是同一套——extension 相依樹怎麼解析、設定樹誰蓋過誰、stage 與 Fabric 為什麼是兩份真值——結論不隨版本改變的就收在這裡,不複製成兩份。</p>
 <p>版本一改就不成立的,收到 <a href="../107">Kit 107</a> 或 <a href="../110">Kit 110</a>。</p>
-<p>這一區的 8 篇:</p>
+<p>這一區的 10 篇:</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -67,6 +67,16 @@
 <td>08</td>
 <td><a href="../common/08-debugging/">除錯:壞掉時不會拋例外</a></td>
 <td>前七篇的假訊號與真訊號對照;log 在哪、怎麼只調大聲一部分;排查順序</td>
+</tr>
+<tr>
+<td>09</td>
+<td><a href="../common/09-omni-ui/">omni.ui:UI 的有無是相依問題</a></td>
+<td>UI 由 extension 提供;四層各自能切,省下來的東西不一樣</td>
+</tr>
+<tr>
+<td>10</td>
+<td><a href="../common/10-packaging-and-release/">打包與發佈:兩次 build 不保證一樣</a></td>
+<td><code>.kit</code> 宣告的是版本範圍不是版本;三道防線與交付前檢查</td>
 </tr>
 </tbody>
 </table></div>

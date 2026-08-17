@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 · 打包與發佈:同一份 `.kit` 檔,兩次 build 不保證一樣 — Omniverse Kit 實戰筆記</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../../">Omniverse Kit 實戰筆記</a>
+  <nav class="tabs"><a href="../../">總覽</a><a href="../../common/" class="on">共通</a><a href="../../107/">Kit 107</a><a href="../../110/">Kit 110</a><a href="../../version-matrix.html">版本差異</a></nav>
+  <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
+</header>
+<div class="shell">
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li><li><a href="../../common/05-omnigraph/"><span class="n">05</span>OmniGraph</a></li><li><a href="../../common/06-run-modes/"><span class="n">06</span>執行模式:headless 不是「沒在算圖」</a></li><li><a href="../../common/07-rendering-and-materials/"><span class="n">07</span>渲染與材質:「畫面是黑的」有四個成因</a></li><li><a href="../../common/08-debugging/"><span class="n">08</span>除錯:這一層的東西壞掉時不會拋例外</a></li><li><a href="../../common/09-omni-ui/"><span class="n">09</span>omni.ui</a></li><li><a href="../../common/10-packaging-and-release/" class="on"><span class="n">10</span>打包與發佈</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-kit-app-template-提供什麼">1. kit-app-template 提供什麼</a></li><li class="l2"><a href="#2-kit-檔是-manifest">2. .kit 檔是 manifest</a></li><li class="l2"><a href="#3-版本解析的不確定性">3. 版本解析的不確定性</a></li><li class="l2"><a href="#4-三道防線">4. 三道防線</a></li><li class="l2"><a href="#5-交付前的檢查">5. 交付前的檢查</a></li><li class="l2"><a href="#6-待驗清單">6. 待驗清單</a></li></ul></aside>
+  <main class="doc">
+<h1 id="10-打包與發佈同一份-kit-檔兩次-build-不保證一樣">10 · 打包與發佈:同一份 <code>.kit</code> 檔,兩次 build 不保證一樣</h1>
+<p>開發機上測過的應用,搬到場域主機跑出不同的行為,而 <code>.kit</code> 檔一個字都沒改。</p>
+<p>這不一定是環境問題。<strong><code>.kit</code> 檔宣告的是版本範圍,不是版本</strong>,而解析器每次都去找當下最新的相容版——兩次 build 之間 registry 上多了一版,解出來的東西就不一樣了。</p>
+<p align="center"><img src="../../img/build-reproducibility.svg" width="850" alt="同一份 .kit 檔在兩個時間點解出不同版本,以及三個讓它可重現的做法"></p>
+
+<blockquote>
+<p><strong>驗證狀態</strong>:§1、§2 引用官方逐字。<strong>§3 是從官方敘述與 <a href="../../common/02-extension-system/">02</a> 的解析規則推的,本 repo 未實測</strong>;§4 的做法同樣未驗證,§6 是驗法。</p>
+</blockquote>
+<h2 id="1-kit-app-template-提供什麼">1. kit-app-template 提供什麼</h2>
+<p>官方對它的描述是「a framework for efficiently managing extensions and plugins」,提供「the tooling necessary for developers to assemble a blend of NVIDIA-provided and custom-developed extensions」。</p>
+<p>重點在 <strong>assemble a blend</strong>——把 NVIDIA 提供的與自己寫的 extension 組起來。這正是 <a href="../../common/01-kit-is-the-framework/">01 §2</a> 講的:應用就是一組 extension 的組合,而這個模板倉庫提供組合它們的工具鏈。</p>
+<p>常用的兩個指令:</p>
+<pre><code class="language-bash">./repo.sh template new     # 產生新專案的骨架
+./repo.sh build            # 建置 Kit SDK 實例與應用
+</code></pre>
+<p>Windows 上對應 <code>.\repo.bat</code>。</p>
+<h2 id="2-kit-檔是-manifest">2. <code>.kit</code> 檔是 manifest</h2>
+<p>官方對 <code>.kit</code> 檔的另一個說法補上了 <a href="../../common/01-kit-is-the-framework/">01</a> 沒講的一面:</p>
+<blockquote>
+<p>它「function as a single-file extension and acts as a manifest, outlining the necessary extensions and their configuration」</p>
+</blockquote>
+<p><strong>它自己就是一個 extension,同時扮演清單。</strong> 這解釋了為什麼它的格式與 <code>extension.toml</code> 相同——它本來就是同一種東西,差別只在它是相依樹的根。</p>
+<p>extension 這一側則是「uniquely named and versioned packages, loaded at runtime」,是「the fundamental building blocks」。<strong>loaded at runtime</strong> 這四個字是下一節的前提:組裝發生在執行期,不是編譯期。</p>
+<h2 id="3-版本解析的不確定性">3. 版本解析的不確定性</h2>
+<p>官方描述 Kit 管理相依版本的方式:</p>
+<blockquote>
+<p>"resolving and enabling the latest compatible versions of each extension, allowing for dynamic updates while maintaining a stable environment"</p>
+</blockquote>
+<p><strong>最新的相容版</strong>,而且明說目的之一是允許動態更新。把它跟 <a href="../../common/02-extension-system/">02 §2</a> 的相容規則放在一起:相容是一個範圍(最左邊那個非零位相同),範圍裡通常有很多版。</p>
+<p>推出來的結果:</p>
+<blockquote>
+<p>同一份 <code>.kit</code> 檔,在兩個時間點、兩台機器上,可以解出不同的版本組合。<strong>而兩次都是對的</strong>——兩個版本都落在宣告的範圍裡。</p>
+</blockquote>
+<p><a href="../../common/02-extension-system/">02 §3</a> 那條「偏好本地已下載的勝過遠端更新的」在這裡有雙面性:</p>
+<ul>
+<li>好的一面:開發機上一旦解到某一版,後續啟動會穩定用它,不會每次都變。</li>
+<li>麻煩的一面:<strong>正因為開發機穩定,所以「在我這台測過」對一台空的新機器沒有證明力</strong>。新機器沒有快取,它會去 registry 拿當下最新的相容版。</li>
+</ul>
+<p>這一條與 <a href="../../common/02-extension-system/">02 §4.1</a> 的 <code>devPaths</code> 忽略版本檢查是兩個獨立的機制,但造成的誤判形狀相同:<strong>開發機上的成功來自那台機器的特殊狀態,而不是來自這份設定本身。</strong></p>
+<h2 id="4-三道防線">4. 三道防線</h2>
+<p>要讓兩次 build 出來的東西一樣,得自己動手。三個做法可以疊加:</p>
+<p><strong>一、把版本釘死。</strong> <code>[dependencies]</code> 的一筆可以帶 <code>exact</code>(<a href="../../common/02-extension-system/">02 §2</a>),用它取代範圍宣告。<strong>本 repo 沒有查證 <code>exact</code> 的確切語意與寫法</strong>,採用前先看手上版本的文件確認。</p>
+<p><strong>二、連同解出來的那一份一起交付。</strong> extension 是「loaded at runtime」,所以只交付 <code>.kit</code> 檔等於把解析這一步留到場域主機上做,而那台的 registry 可及性、快取狀態都不在掌控內。把解析結果一起打包,到場就不必再解。這也順帶解決離線環境的問題——場域主機常常連不出去。</p>
+<p><strong>三、在乾淨環境驗一次。</strong> 交付前跑一次「沒有開發路徑、沒有既有快取」的建置與啟動。這一步是前兩道防線的驗收:如果解出來的東西與開發機不同,問題會在這裡浮現,而不是在客戶那裡。</p>
+<h2 id="5-交付前的檢查">5. 交付前的檢查</h2>
+<p>把前面幾篇的相關條目收在一起,交付前值得逐項確認:</p>
+<ul>
+<li>[ ] 沒有依賴 <code>devPaths</code> / <code>devFolders</code>(<a href="../../common/02-extension-system/">02 §4.1</a>)</li>
+<li>[ ] 版本宣告是釘死的,不是範圍(§4)</li>
+<li>[ ] 在空快取的機器上建置並啟動成功(§4)</li>
+<li>[ ] 啟動後查一次能力在不在,不看回傳值(<a href="../../common/08-debugging/">08 §2</a>)</li>
+<li>[ ] 設定的實際生效值與預期一致(<a href="../../common/03-carb-settings/">03 §7</a>)</li>
+<li>[ ] 離線環境下不會卡在 registry(<a href="../../common/02-extension-system/">02 §4</a>)</li>
+</ul>
+<h2 id="6-待驗清單">6. 待驗清單</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>待驗的斷言</th>
+<th>怎麼驗</th>
+<th>什麼算通過</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>同一份 <code>.kit</code> 在不同時間解出不同版本(§3)</td>
+<td>記下一次建置解出的版本;等 registry 有新的相容版後,在空快取機器上再建一次</td>
+<td>兩次的版本清單不同</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>exact</code> 能釘死版本(§4)</td>
+<td>用 <code>exact</code> 宣告,在空快取機器上建置</td>
+<td>解出的就是指定的那一版</td>
+</tr>
+<tr>
+<td>3</td>
+<td>空快取機器與開發機解出的結果不同(§3)</td>
+<td>同一份設定,兩台機器各建一次並比對版本清單</td>
+<td>清單有差異</td>
+</tr>
+<tr>
+<td>4</td>
+<td>打包解析結果之後不再需要 registry(§4)</td>
+<td>斷網啟動打包好的應用</td>
+<td>啟動成功</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>./repo.sh build</code> 的產物包含哪些東西(§1)</td>
+<td>建置一次,盤點輸出目錄</td>
+<td>列得出清單,並確認 Kit SDK 實例是否在內</td>
+</tr>
+</tbody>
+</table></div>
+<p>第 1 與第 3 條是這篇的骨幹。在驗到之前,把「版本可能會漂」當成預設假設處理——<strong>成本是在交付流程裡多一道釘版本的步驟,而漏掉它的成本是在客戶現場除錯一個開發機上重現不了的問題。</strong></p>
+  </main>
+</div>
+<footer class="foot">
+  <a href="../../">總覽</a> · <a href="../../version-matrix.html">版本差異速查</a> · <a href="https://github.com/wicanr2/omniverse-kit-study">原始碼</a>
+</footer>
+</body>
+</html>

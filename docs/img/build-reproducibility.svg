@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" height="470"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="470" fill="#faf8f4"/>
+
+  <text x="45" y="30" font-size="15" fill="#3d3833" font-weight="600">同一份 .kit 檔,兩次 build 不保證解出同一組版本</text>
+  <text x="45" y="52" font-size="12.5" fill="#8a827a">因為解析器要的是「最新的相容版」,而相容是一個範圍</text>
+
+  <!-- .kit -->
+  <rect x="290" y="74" width="320" height="66" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.5"/>
+  <text x="310" y="98" font-size="13.5" fill="#1f6f63" font-family="ui-monospace,'DejaVu Sans Mono',monospace">[dependencies]</text>
+  <text x="310" y="120" font-size="13.5" fill="#3d3833" font-family="ui-monospace,'DejaVu Sans Mono',monospace">"omni.foo" = { version = "1.0" }</text>
+  <text x="310" y="136" font-size="11.5" fill="#8a827a">一個範圍,不是一個版本</text>
+
+  <path d="M370 140 L370 172 L250 172 L250 200" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M250 204 l-5 -9 h10 z" fill="#8a827a"/>
+  <path d="M530 140 L530 172 L650 172 L650 200" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M650 204 l-5 -9 h10 z" fill="#8a827a"/>
+
+  <!-- T1 -->
+  <rect x="90" y="204" width="320" height="82" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="110" y="228" font-size="13" fill="#8a827a">開發機,三月</text>
+  <text x="110" y="254" font-size="14.5" fill="#3d3833" font-family="ui-monospace,'DejaVu Sans Mono',monospace">omni.foo-1.0.3</text>
+  <text x="110" y="274" font-size="12" fill="#8a827a">當時 registry 上最新的相容版</text>
+
+  <!-- T2 -->
+  <rect x="490" y="204" width="320" height="82" rx="6" fill="#fdf3e9" stroke="#b5651d" stroke-width="1.4"/>
+  <text x="510" y="228" font-size="13" fill="#8a4a12">場域主機,八月</text>
+  <text x="510" y="254" font-size="14.5" fill="#8a4a12" font-family="ui-monospace,'DejaVu Sans Mono',monospace">omni.foo-1.0.7</text>
+  <text x="510" y="274" font-size="12" fill="#8a4a12">現在最新的相容版</text>
+
+  <text x="290" y="316" font-size="13" fill="#8a4a12">兩次都是對的——兩個版本都落在宣告的相容範圍裡</text>
+
+  <line x1="45" y1="336" x2="855" y2="336" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="45" y="360" font-size="14" fill="#3d3833" font-weight="600">要讓兩次一樣,得自己動手</text>
+
+  <text x="66" y="388" font-size="13.5" fill="#57514b">把版本釘死,不要留範圍</text>
+  <text x="66" y="414" font-size="13.5" fill="#57514b">連同解出來的那一份一起交付,不要到場才解析</text>
+  <text x="66" y="440" font-size="13.5" fill="#57514b">交付前在沒有開發路徑、沒有既有快取的乾淨環境驗一次</text>
+</svg>

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 · omni.ui:UI 是 extension 提供的,所以它的有無是相依問題 — Omniverse Kit 實戰筆記</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../../">Omniverse Kit 實戰筆記</a>
+  <nav class="tabs"><a href="../../">總覽</a><a href="../../common/" class="on">共通</a><a href="../../107/">Kit 107</a><a href="../../110/">Kit 110</a><a href="../../version-matrix.html">版本差異</a></nav>
+  <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
+</header>
+<div class="shell">
+  <aside class="side"><div class="side-h">共通</div><ul class="side-l"><li><a href="../../common/01-kit-is-the-framework/"><span class="n">01</span>Kit 是框架,Isaac Sim 是搭在上面的應用</a></li><li><a href="../../common/02-extension-system/"><span class="n">02</span>extension 系統</a></li><li><a href="../../common/03-carb-settings/"><span class="n">03</span>carb settings</a></li><li><a href="../../common/04-usd-stage-and-fabric/"><span class="n">04</span>USD stage 與 Fabric</a></li><li><a href="../../common/05-omnigraph/"><span class="n">05</span>OmniGraph</a></li><li><a href="../../common/06-run-modes/"><span class="n">06</span>執行模式:headless 不是「沒在算圖」</a></li><li><a href="../../common/07-rendering-and-materials/"><span class="n">07</span>渲染與材質:「畫面是黑的」有四個成因</a></li><li><a href="../../common/08-debugging/"><span class="n">08</span>除錯:這一層的東西壞掉時不會拋例外</a></li><li><a href="../../common/09-omni-ui/" class="on"><span class="n">09</span>omni.ui</a></li><li><a href="../../common/10-packaging-and-release/"><span class="n">10</span>打包與發佈</a></li></ul><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#1-什麼是-omniui">1. 什麼是 omni.ui</a></li><li class="l2"><a href="#2-mdv資料與顯示分開">2. MDV:資料與顯示分開</a></li><li class="l2"><a href="#3-ui-的存在是相依問題">3. UI 的存在是相依問題</a></li><li class="l2"><a href="#4-headless-下省不省得到">4. headless 下省不省得到</a></li><li class="l2"><a href="#5-待驗清單">5. 待驗清單</a></li></ul></aside>
+  <main class="doc">
+<h1 id="09-omniuiui-是-extension-提供的所以它的有無是相依問題">09 · omni.ui:UI 是 extension 提供的,所以它的有無是相依問題</h1>
+<p>「headless 的時候 UI 就不存在了吧」——這句話對了一半,而錯的那一半有實際成本。</p>
+<p>UI 由 extension 提供,所以它存在與否由 <code>.kit</code> 的相依決定;而 <code>--no-window</code> 動的是最後一層。兩者省下來的東西不一樣。</p>
+<p align="center"><img src="../../img/ui-dependency-chain.svg" width="850" alt="從 .kit 相依到螢幕顯示的四層,以及兩個不同的切點"></p>
+
+<blockquote>
+<p><strong>驗證狀態</strong>:§1、§2 引用官方逐字。<strong>本 repo 沒有 Kit 環境,§3、§4 是從機制推的,未實機驗證</strong>,驗法在 §5。</p>
+</blockquote>
+<h2 id="1-什麼是-omniui">1. 什麼是 omni.ui</h2>
+<p>官方的定義:</p>
+<blockquote>
+<p>"The Omniverse UI Framework is the UI toolkit for creating beautiful and flexible graphical user interfaces in the Kit extensions."</p>
+</blockquote>
+<p>注意最後三個字——<strong>in the Kit extensions</strong>。這不是一個獨立的 UI 函式庫,它是給 extension 用來長出介面的工具。這句話直接決定了 §3。</p>
+<p>它提供基本 UI 元件與一套排版系統,元件都支援樣式覆寫。</p>
+<h2 id="2-mdv資料與顯示分開">2. MDV:資料與顯示分開</h2>
+<blockquote>
+<p>"The widgets follow the Model-Delegate-View (MDV) pattern which highlights a separation between the data and the display logic."</p>
+</blockquote>
+<p>Model 是資料、View 是顯示、Delegate 決定怎麼畫。分開的理由是同一份資料要能有多種呈現,而且改呈現不該動到資料。</p>
+<p>實務上的意義:<strong>資料模型可以獨立於顯示存在</strong>。這一點在 §4 會再出現——沒有視窗不代表模型與回呼那一層不見了。</p>
+<p>官方提供兩個互動式的示範 extension,<code>omni.example.ui</code> 展示元件與排版怎麼組合,<code>omni.kit.documentation.ui.style</code> 展示樣式系統。要學的話從這兩個進去比讀 API 文件快。</p>
+<h2 id="3-ui-的存在是相依問題">3. UI 的存在是相依問題</h2>
+<p>既然 UI 由 extension 提供,那麼「這個應用有沒有 UI」就跟「有沒有 UI extension 被拉進來」是同一個問題(<a href="../../common/02-extension-system/">02</a>)。</p>
+<p>拆成四層來看,切在不同層省下來的東西不同:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>層</th>
+<th>這一層決定什麼</th>
+<th>怎麼切</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>UI extension 在不在相依樹上</td>
+<td>從 <code>.kit</code> 的 <code>[dependencies]</code> 拿掉</td>
+</tr>
+<tr>
+<td>2</td>
+<td>有沒有被載入(佔記憶體與啟動時間)</td>
+<td>同上,第 1 層決定</td>
+</tr>
+<tr>
+<td>3</td>
+<td>有沒有建立視窗與 widget</td>
+<td>由 extension 自己的邏輯決定</td>
+</tr>
+<tr>
+<td>4</td>
+<td>有沒有畫到本機螢幕</td>
+<td><code>--no-window</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong><code>--no-window</code> 切的是第 4 層。</strong> 前面三層照舊:extension 載了、記憶體佔了、啟動時間花了、視窗物件可能也建了,只是沒有畫出來。</p>
+<p>要真的省下那些,得動第 1 層——把 UI extension 從應用的相依裡拿掉,做一個本來就不含 UI 的 <code>.kit</code>。這也是為什麼同一套 SDK 底下會有「full」與比較精簡的多個 experience 檔(<a href="../../common/01-kit-is-the-framework/">01 §3</a>)。</p>
+<h2 id="4-headless-下省不省得到">4. headless 下省不省得到</h2>
+<p>接 <a href="../../common/06-run-modes/">06 §6</a> 那條推論,現在可以講得更精確:</p>
+<ul>
+<li>想省<strong>顯示</strong>:<code>--no-window</code> 就夠了。</li>
+<li>想省<strong>記憶體與啟動時間</strong>:要換一個不含 UI extension 的 <code>.kit</code> 檔。</li>
+<li>想省<strong>GPU</strong>:兩個都不夠——算圖是另一條路徑,見 <a href="../../common/06-run-modes/">06 §2</a>。</li>
+</ul>
+<p>三件事三個切點,而它們常被當成同一件事。規劃遠端伺服器的資源時,把要省的是哪一種先講清楚,再決定動哪一層。</p>
+<p><strong>以上是從機制推的,本 repo 未實測。</strong> 特別是「<code>--no-window</code> 下 UI extension 仍被載入」這條,值得優先驗——它決定了上面那張表能不能拿來做資源規劃。</p>
+<h2 id="5-待驗清單">5. 待驗清單</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>待驗的斷言</th>
+<th>怎麼驗</th>
+<th>什麼算通過</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>--no-window</code> 下 UI extension 仍在啟用清單裡(§3)</td>
+<td>加該旗標啟動,查 UI 相關 extension 的狀態</td>
+<td>仍列為啟用</td>
+</tr>
+<tr>
+<td>2</td>
+<td>從相依拿掉才真的省記憶體(§3)</td>
+<td>三種組態各量一次常駐記憶體與啟動時間:含 UI、含 UI 加 <code>--no-window</code>、不含 UI</td>
+<td>前兩者接近,第三者明顯較低</td>
+</tr>
+<tr>
+<td>3</td>
+<td>沒有視窗時資料模型仍可用(§2)</td>
+<td>在 <code>--no-window</code> 下建立一個 model 並讀寫</td>
+<td>讀寫正常</td>
+</tr>
+<tr>
+<td>4</td>
+<td>不含 UI 的 <code>.kit</code> 能正常啟動(§3)</td>
+<td>寫一個最小的、不列任何 UI extension 的 <code>.kit</code></td>
+<td>啟動成功,而 UI 相關 API 不存在</td>
+</tr>
+</tbody>
+</table></div>
+<p>第 2 條是這篇唯一能落到數字的一條,也是唯一能拿去做資源規劃的一條。做的時候記得量測條件要一起記:Kit 版本、機器、樣本數。</p>
+  </main>
+</div>
+<footer class="foot">
+  <a href="../../">總覽</a> · <a href="../../version-matrix.html">版本差異速查</a> · <a href="https://github.com/wicanr2/omniverse-kit-study">原始碼</a>
+</footer>
+</body>
+</html>

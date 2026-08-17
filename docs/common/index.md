@@ -4,7 +4,7 @@
 
 版本一改就不成立的,收到 [Kit 107](../107/) 或 [Kit 110](../110/)。
 
-這一區的 8 篇:
+這一區的 10 篇:
 
 | # | 篇名 | 講什麼 |
 |---|---|---|
@@ -16,3 +16,5 @@
 | 06 | [執行模式:headless 不是「沒在算圖」](06-run-modes/README.md) | 視窗與算圖是兩個獨立開關;`--exec`;串流三個 extension 的分工與兩個結構性限制 |
 | 07 | [渲染與材質:「畫面是黑的」有四個成因](07-rendering-and-materials/README.md) | 缺貼圖是純黑不是素色;MDL 缺失是另一種顏色;`visibility` 不改變碰撞 |
 | 08 | [除錯:壞掉時不會拋例外](08-debugging/README.md) | 前七篇的假訊號與真訊號對照;log 在哪、怎麼只調大聲一部分;排查順序 |
+| 09 | [omni.ui:UI 的有無是相依問題](09-omni-ui/README.md) | UI 由 extension 提供;四層各自能切,省下來的東西不一樣 |
+| 10 | [打包與發佈:兩次 build 不保證一樣](10-packaging-and-release/README.md) | `.kit` 宣告的是版本範圍不是版本;三道防線與交付前檢查 |

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" height="440"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="900" height="440" fill="#faf8f4"/>
+
+  <text x="45" y="32" font-size="15" fill="#3d3833" font-weight="600">UI 存在與否,是四層各自的問題</text>
+  <text x="45" y="54" font-size="12.5" fill="#8a827a">切在不同層,省下來的東西不一樣</text>
+
+  <!-- 四層 -->
+  <rect x="45" y="76" width="480" height="58" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.5"/>
+  <text x="66" y="100" font-size="14" fill="#1f6f63">1 · <tspan font-family="ui-monospace,'DejaVu Sans Mono',monospace">.kit</tspan> 的 <tspan font-family="ui-monospace,'DejaVu Sans Mono',monospace">[dependencies]</tspan> 有沒有列 UI extension</text>
+  <text x="66" y="122" font-size="12.5" fill="#8a827a">沒列就完全不存在,連載入都不會發生</text>
+
+  <path d="M285 134 L285 158" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M285 162 l-5 -9 h10 z" fill="#8a827a"/>
+
+  <rect x="45" y="162" width="480" height="58" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="66" y="186" font-size="14" fill="#3d3833">2 · UI extension 被載入</text>
+  <text x="66" y="208" font-size="12.5" fill="#8a827a">佔記憶體與啟動時間,不管有沒有人看</text>
+
+  <path d="M285 220 L285 244" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M285 248 l-5 -9 h10 z" fill="#8a827a"/>
+
+  <rect x="45" y="248" width="480" height="58" rx="6" fill="#ffffff" stroke="#cfc8bd" stroke-width="1.2"/>
+  <text x="66" y="272" font-size="14" fill="#3d3833">3 · 建立視窗與 widget</text>
+  <text x="66" y="294" font-size="12.5" fill="#8a827a">資料模型與回呼都掛在這一層</text>
+
+  <path d="M285 306 L285 330" fill="none" stroke="#8a827a" stroke-width="1.3"/>
+  <path d="M285 334 l-5 -9 h10 z" fill="#8a827a"/>
+
+  <rect x="45" y="334" width="480" height="58" rx="6" fill="#fdf3e9" stroke="#b5651d" stroke-width="1.4"/>
+  <text x="66" y="358" font-size="14" fill="#8a4a12">4 · 顯示在本機螢幕上</text>
+  <text x="66" y="380" font-size="12.5" fill="#8a4a12">看得見的只有這一層</text>
+
+  <!-- 右側切點 -->
+  <line x1="525" y1="105" x2="580" y2="105" stroke="#1f6f63" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <rect x="580" y="82" width="275" height="46" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.3"/>
+  <text x="598" y="102" font-size="13" fill="#1f6f63" font-weight="600">從相依裡拿掉</text>
+  <text x="598" y="120" font-size="12" fill="#57514b">記憶體與啟動時間才真的省下來</text>
+
+  <line x1="525" y1="363" x2="580" y2="363" stroke="#b5651d" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <rect x="580" y="340" width="275" height="46" rx="6" fill="#fdf3e9" stroke="#b5651d" stroke-width="1.3"/>
+  <text x="598" y="360" font-size="13" fill="#8a4a12" font-family="ui-monospace,'DejaVu Sans Mono',monospace">--no-window</text>
+  <text x="598" y="378" font-size="12" fill="#8a4a12">只切這一層,上面三層照舊</text>
+</svg>
