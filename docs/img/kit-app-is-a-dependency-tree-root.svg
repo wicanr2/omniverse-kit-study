@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 480" width="880" height="480"
+     font-family="'Noto Sans CJK TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="880" height="480" fill="#faf8f4"/>
+
+  <!-- 上方軸標籤 -->
+  <text x="55" y="26" font-size="13" fill="#8a827a">應用 = 相依樹的根,一個 .kit 檔</text>
+
+  <!-- 根 A:Isaac Sim -->
+  <rect x="55" y="40" width="300" height="58" rx="6" fill="#ffffff" stroke="#b5651d" stroke-width="1.6"/>
+  <text x="72" y="66" font-size="16" fill="#8a4a12" font-family="ui-monospace,'DejaVu Sans Mono',monospace">isaacsim.exp.full.kit</text>
+  <text x="72" y="86" font-size="13" fill="#8a827a">Isaac Sim</text>
+
+  <!-- 根 B:USD Composer -->
+  <rect x="525" y="40" width="300" height="58" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.6"/>
+  <text x="542" y="66" font-size="16" fill="#1f6f63" font-family="ui-monospace,'DejaVu Sans Mono',monospace">omni.usd_composer.kit</text>
+  <text x="542" y="86" font-size="13" fill="#8a827a">另一個 Kit 應用</text>
+
+  <!-- A 的分岔連線 -->
+  <path d="M205 98 L205 150 M175 150 L500 150 M175 150 L175 208 M500 150 L500 208"
+        fill="none" stroke="#b5651d" stroke-width="1.4"/>
+  <path d="M175 208 l-5 -9 h10 z" fill="#b5651d"/>
+  <path d="M500 208 l-5 -9 h10 z" fill="#b5651d"/>
+
+  <!-- B 的連線 -->
+  <path d="M675 98 L675 208" fill="none" stroke="#1f6f63" stroke-width="1.4"/>
+  <path d="M675 208 l-5 -9 h10 z" fill="#1f6f63"/>
+
+  <!-- 機器人疊層 -->
+  <rect x="55" y="212" width="240" height="168" rx="6" fill="#fdf3e9" stroke="#e0c3a3" stroke-width="1.2"/>
+  <text x="72" y="240" font-size="15" fill="#8a4a12" font-weight="600">isaacsim.* 機器人疊層</text>
+  <line x1="72" y1="250" x2="278" y2="250" stroke="#e0c3a3" stroke-width="1"/>
+  <text x="72" y="278" font-size="13.5" fill="#57514b">ROS 2 bridge</text>
+  <text x="72" y="302" font-size="13.5" fill="#57514b">相機 / LiDAR 感測器</text>
+  <text x="72" y="326" font-size="13.5" fill="#57514b">URDF / MJCF 匯入器</text>
+  <text x="72" y="350" font-size="13.5" fill="#57514b">articulation 機器人工具</text>
+  <text x="72" y="372" font-size="12" fill="#a09890">只有左邊那個根拉得到</text>
+
+  <!-- Kit SDK 池 -->
+  <rect x="325" y="212" width="500" height="168" rx="6" fill="#ffffff" stroke="#1f6f63" stroke-width="1.4"/>
+  <text x="345" y="240" font-size="15" fill="#1f6f63" font-weight="600">Omniverse Kit SDK</text>
+  <line x1="345" y1="250" x2="805" y2="250" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="345" y="278" font-size="13.5" fill="#57514b">extension 系統與 registry</text>
+  <text x="345" y="302" font-size="13.5" fill="#57514b">carb settings 設定樹</text>
+  <text x="345" y="326" font-size="13.5" fill="#57514b">USD stage 與 Fabric</text>
+  <text x="600" y="278" font-size="13.5" fill="#57514b">Hydra + RTX 算圖</text>
+  <text x="600" y="302" font-size="13.5" fill="#57514b">omni.ui</text>
+  <text x="600" y="326" font-size="13.5" fill="#57514b">OmniGraph</text>
+  <text x="345" y="360" font-size="12" fill="#a09890">兩邊拉到的是同一套</text>
+
+  <!-- 底部結論 -->
+  <line x1="55" y1="412" x2="825" y2="412" stroke="#cfc8bd" stroke-width="1"/>
+  <text x="55" y="438" font-size="14" fill="#3d3833">換掉根 <tspan font-family="ui-monospace,'DejaVu Sans Mono',monospace" fill="#8a4a12">.kit</tspan> 檔就是另一個應用。下面那一層沒有變,所以那一層的行為與症狀也不會因為換了應用而不同。</text>
+  <text x="55" y="462" font-size="13" fill="#8a827a">在 Isaac Sim 裡遇到 extension 載不起來、設定沒生效、圖不 tick,問題多半落在下面那一層。</text>
+</svg>

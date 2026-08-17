@@ -1,0 +1,33 @@
+# Omniverse Kit 實戰筆記:框架這一層
+
+大部分 Omniverse 的教學從應用開始講——開 Isaac Sim、開 USD Composer,點選單、拖物件。但那些應用共用的底座是同一套東西:extension 系統、carb settings、USD stage 與 Fabric、Hydra/RTX、OmniGraph、omni.ui。**應用層查不到答案的問題,答案通常在這一層。**
+
+這裡整理的是 Kit SDK 本身的機制與踩坑,每篇從「要解決什麼根本問題」出發,並且標明哪些是官方機制、哪些是實測結論、哪些還只是推測。
+
+## 三個入口
+
+**[共通:機制與方法論](common/)** · 1 篇
+不綁 Kit 版本的機制與方法。Kit 的多數概念——extension 相依樹、設定樹的優先序、stage 與 Fabric 的分工——跨版本是同一套,所以不按版本分。
+
+**[Kit 107](107/)** · 0 篇
+只在 107 系列成立的內容。Isaac Sim 5.0 / 5.1 底下就是這一版。
+
+**[Kit 110](110/)** · 0 篇
+只在 110 系列成立的內容。Isaac Sim 6.0 / 6.0.1 底下是這一版。
+
+**[版本差異速查](version-matrix.md)**
+跨版本排查最花時間的不是「哪裡不一樣」,是「這個症狀該不該歸給版本」。每一列都標出處與證據等級。
+
+## 怎麼開始
+
+| 你的處境 | 從這裡進 |
+|---|---|
+| 想搞清楚 Kit 與 Isaac Sim 到底誰包含誰 | [01 Kit 是框架,Isaac Sim 是搭在上面的應用](common/01-kit-is-the-framework/README.md) |
+| 在 Isaac Sim 裡遇到問題,不確定該查誰的文件 | [01 §5 症狀該往哪一層找](common/01-kit-is-the-framework/README.md) |
+| 手上有一套 Isaac Sim,想知道底下是哪一版 Kit | [01 §4 版本對應](common/01-kit-is-the-framework/README.md) |
+
+## 這個 repo 的狀態
+
+骨架階段。目前 1 篇,主題骨架列在[根 README](https://github.com/wicanr2/omniverse-kit-study#主題骨架) 裡。
+
+機器人領域的內容在姊妹 repo [isaac-sim-study](https://github.com/wicanr2/isaac-sim-study)([線上版](https://wicanr2.github.io/isaac-sim-study/))。兩邊的分工判準寫在 [01 §6](common/01-kit-is-the-framework/README.md)。

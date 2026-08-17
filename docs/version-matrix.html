@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kit 版本差異速查 — Omniverse Kit 實戰筆記</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="">Omniverse Kit 實戰筆記</a>
+  <nav class="tabs"><a href="">總覽</a><a href="common/">共通</a><a href="107/">Kit 107</a><a href="110/">Kit 110</a><a href="version-matrix.html" class="on">版本差異</a></nav>
+  <a class="gh" href="https://github.com/wicanr2/omniverse-kit-study">GitHub</a>
+</header>
+<div class="shell">
+  <aside class="side"><div class="side-h">本篇</div><ul class="toc"><li class="l2"><a href="#kit-版本與-isaac-sim-的對應">Kit 版本與 Isaac Sim 的對應</a></li><li class="l2"><a href="#已知的跨版本變動">已知的跨版本變動</a></li><li class="l2"><a href="#這張表現在還很短">這張表現在還很短</a></li></ul></aside>
+  <main class="doc">
+<h1 id="kit-版本差異速查">Kit 版本差異速查</h1>
+<p>跨版本排查最花時間的不是「哪裡不一樣」,是「這個症狀該不該歸給版本」。這張表把本 repo 查證過的差異集中在一處,每一列標出處與證據等級。<strong>沒列進來的,就是本 repo 沒有證據,不要當成「兩版相同」。</strong></p>
+<h2 id="kit-版本與-isaac-sim-的對應">Kit 版本與 Isaac Sim 的對應</h2>
+<p>Kit 與 Isaac Sim 的版本號完全不同步,而手上拿到的通常是 Isaac Sim 的版本號。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Isaac Sim</th>
+<th>Kit SDK</th>
+<th>證據等級</th>
+<th>出處</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4.5.0</td>
+<td>106.5.0</td>
+<td>release notes 摘要,未逐字核對</td>
+<td><a href="common/01-kit-is-the-framework/">01 §4</a></td>
+</tr>
+<tr>
+<td>5.0.0</td>
+<td>107.3.1</td>
+<td>由 5.1.0 的變更前值反推</td>
+<td><a href="common/01-kit-is-the-framework/">01 §4</a></td>
+</tr>
+<tr>
+<td><strong>5.1.0</strong></td>
+<td><strong>107.3.3</strong></td>
+<td>官方逐字</td>
+<td><a href="common/01-kit-is-the-framework/">01 §4</a></td>
+</tr>
+<tr>
+<td>6.0.0 早期開發版</td>
+<td>109.0.2</td>
+<td>待查證</td>
+<td><a href="common/01-kit-is-the-framework/">01 §4</a></td>
+</tr>
+<tr>
+<td><strong>6.0.0 GA</strong></td>
+<td><strong>110.1.1</strong></td>
+<td>官方逐字</td>
+<td><a href="common/01-kit-is-the-framework/">01 §4</a></td>
+</tr>
+<tr>
+<td><strong>6.0.1</strong></td>
+<td><strong>110.1.2</strong></td>
+<td>官方逐字</td>
+<td><a href="common/01-kit-is-the-framework/">01 §4</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>粗體那三列可以拿來當結論。其餘三列是線索,不要拿去做決策。</p>
+<p>要確認手上這一套,別查 Isaac Sim 的版本再對表——直接問 Kit 自己:<code>&lt;isaac-sim-root&gt;/kit/kit --version</code>。輸出與這張表對不上時,以你機器上的輸出為準,該修的是這張表。</p>
+<h2 id="已知的跨版本變動">已知的跨版本變動</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>變動</th>
+<th>證據等級</th>
+<th>出處</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>omni.kit.window.viewport</code></td>
+<td>106 標為 deprecated,107 從 SDK 移除</td>
+<td>官方 release notes,本 repo 未實機驗證</td>
+<td><a href="107">Kit 107 區</a></td>
+</tr>
+<tr>
+<td>版本號連續性</td>
+<td>107 之後是 109(僅早期開發版)、110,沒有 108</td>
+<td>由 release notes 推得</td>
+<td><a href="110">Kit 110 區</a></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="這張表現在還很短">這張表現在還很短</h2>
+<p>骨架階段,共通區只有 1 篇,兩個版本區都還是空的。<strong>表短不代表兩版差異少</strong>,只代表本 repo 還沒有證據。分區判準是「結論依不依賴版本」:一條結論兩版都成立就留在共通區,只有出現「只有這一版這樣」的證據時才會落進版本區,同時在這裡補一列。</p>
+  </main>
+</div>
+<footer class="foot">
+  <a href="">總覽</a> · <a href="version-matrix.html">版本差異速查</a> · <a href="https://github.com/wicanr2/omniverse-kit-study">原始碼</a>
+</footer>
+</body>
+</html>
